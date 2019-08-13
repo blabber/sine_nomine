@@ -59,7 +59,7 @@ _err(bool print_errno, const char *fmt, va_list ap)
 	endwin();
 
 	vfprintf(stderr, fmt, ap);
-	
+
 	if (print_errno)
 		fprintf(stderr, ": %s\n", strerror(errno));
 

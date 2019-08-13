@@ -23,7 +23,7 @@ struct bresenham_line {
 	struct coordinate *points;
 };
 
-struct bresenham_line *bresenham_create_line(struct coordinate _start,
-    struct coordinate _stop);
+struct bresenham_line *bresenham_create_line(
+    struct coordinate _start, struct coordinate _stop);
 
 void bresenham_free_line(struct bresenham_line *_line);

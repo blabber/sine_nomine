@@ -26,14 +26,14 @@
 
 static struct level *_allocate(struct dimension _d);
 
-static void _generate_dungeon(struct level  *_l, uint8_t _rooms,
+static void _generate_dungeon(struct level *_l, uint8_t _rooms,
     struct dimension _room_min, struct dimension _room_max);
 
 static void _carve_room(struct level *_level, struct coordinate *_anchor,
     struct dimension _room_min, struct dimension _room_max);
 
-static void _connect_anchors(struct level *_level, uint8_t _rooms,
-    struct coordinate _anchors[]);
+static void _connect_anchors(
+    struct level *_level, uint8_t _rooms, struct coordinate _anchors[]);
 
 struct level *
 level_create(struct dimension d, uint8_t rooms, struct dimension room_min,
@@ -53,7 +53,8 @@ level_create(struct dimension d, uint8_t rooms, struct dimension room_min,
 	return (l);
 }
 
-void level_destroy(struct level *level)
+void
+level_destroy(struct level *level)
 {
 	assert(level != NULL);
 
@@ -66,8 +67,8 @@ void level_destroy(struct level *level)
 }
 
 void
-level_modify_random_floor_tiles(struct level *level, uint8_t count,
-    uint8_t mask)
+level_modify_random_floor_tiles(
+    struct level *level, uint8_t count, uint8_t mask)
 {
 	for (uint8_t i = 1; i < count; i++) {
 		for (;;) {
@@ -95,14 +96,14 @@ _allocate(struct dimension d)
 
 	l->tiles = calloc(l->dimension.height, sizeof(*l->tiles));
 	if (l->tiles == NULL)
-	 	err("level _allocate: calloc");
+		err("level _allocate: calloc");
 
 	assert(l->tiles != NULL);
 
 	for (uint8_t y = 0; y < l->dimension.height; y++) {
 		l->tiles[y] = calloc(l->dimension.width, sizeof(**l->tiles));
 		if (l->tiles[y] == NULL)
-	 		err("level _allocate: calloc");
+			err("level _allocate: calloc");
 
 		assert(l->tiles[y] != NULL);
 
@@ -121,8 +122,8 @@ _allocate(struct dimension d)
  *    the anchor of the next room.
  */
 static void
-_generate_dungeon(struct level *level, uint8_t rooms,
-    struct dimension room_min, struct dimension room_max)
+_generate_dungeon(struct level *level, uint8_t rooms, struct dimension room_min,
+    struct dimension room_max)
 {
 	struct coordinate anchors[rooms];
 	for (uint8_t i = 0; i < rooms; i++)
@@ -132,21 +133,22 @@ _generate_dungeon(struct level *level, uint8_t rooms,
 		_connect_anchors(level, rooms, anchors);
 }
 
-static void _carve_room(struct level *level, struct coordinate *anchor,
+static void
+_carve_room(struct level *level, struct coordinate *anchor,
     struct dimension room_min, struct dimension room_max)
 {
 	uint8_t height = (rand() % (room_max.height - room_min.height + 1)) +
 	    room_min.height;
 
-	uint8_t width = (rand() % (room_max.width - room_min.width + 1)) +
-	    room_min.width;
+	uint8_t width =
+	    (rand() % (room_max.width - room_min.width + 1)) + room_min.width;
 
-	uint8_t oy =
-	    rand() % (level->dimension.height - height + 1 /* full height */ -
+	uint8_t oy = rand() %
+	    (level->dimension.height - height + 1 /* full height */ -
 		2 /* borders */);
 
-	uint8_t ox =
-	    rand() % (level->dimension.width - width + 1 /* full width */ -
+	uint8_t ox = rand() %
+	    (level->dimension.width - width + 1 /* full width */ -
 		2 /* borders */);
 
 	for (uint8_t y = 0; y < height; y++) {
@@ -158,8 +160,9 @@ static void _carve_room(struct level *level, struct coordinate *anchor,
 	anchor->x = ox + (rand() % width);
 }
 
-static void _connect_anchors(struct level *level, uint8_t rooms,
-    struct coordinate anchors[])
+static void
+_connect_anchors(
+    struct level *level, uint8_t rooms, struct coordinate anchors[])
 {
 	for (uint8_t i = 0; i < rooms - 1; i++) {
 		struct coordinate start = anchors[i];

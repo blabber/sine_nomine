@@ -22,8 +22,7 @@
 #include "level.h"
 #include "ui.h"
 
-enum {
-	CP_VISIBLE = 1,
+enum { CP_VISIBLE = 1,
 };
 
 struct ui_context {
@@ -52,23 +51,25 @@ ui_create(void)
 	return (c);
 }
 
-void ui_destroy(struct ui_context *context)
+void
+ui_destroy(struct ui_context *context)
 {
 	assert(context != NULL);
 
 	endwin();
 }
 
-void ui_display(struct ui_context *context, struct player player,
-    struct level *level)
+void
+ui_display(
+    struct ui_context *context, struct player player, struct level *level)
 {
 	assert(context != NULL);
 	assert(level != NULL);
 
 	struct dimension screen = _screen_dimension(context);
-	struct coordinate center = {screen.height/2, screen.width/2};
+	struct coordinate center = { screen.height / 2, screen.width / 2 };
 
-	struct offset offset = {0};
+	struct offset offset = { 0 };
 	offset.y = center.y - player.position.y;
 	offset.x = center.x - player.position.x;
 
@@ -86,8 +87,8 @@ void ui_display(struct ui_context *context, struct player player,
 
 			wattrset(context->window, A_NORMAL);
 			if (level->tiles[y][x] & TA_VISIBLE) {
-				wattron(context->window,
-				    COLOR_PAIR(CP_VISIBLE));
+				wattron(
+				    context->window, COLOR_PAIR(CP_VISIBLE));
 
 				wattron(context->window, A_BOLD);
 			}
@@ -98,15 +99,15 @@ void ui_display(struct ui_context *context, struct player player,
 			if (level->tiles[y][x] & TA_TORCH)
 				t = 'T';
 
-			mvwaddch(context->window,
-			    y + offset.y, x + offset.x, t);
+			mvwaddch(
+			    context->window, y + offset.y, x + offset.x, t);
 		}
 	}
 
 	wattrset(context->window, A_NORMAL);
 	mvwaddch(context->window, center.y, center.x, '@');
 
-	wmove(context->window, screen.height - 1 , screen.width - 1);
+	wmove(context->window, screen.height - 1, screen.width - 1);
 	wrefresh(context->window);
 }
 
@@ -147,7 +148,7 @@ _screen_dimension(struct ui_context *context)
 	int height, width;
 	getmaxyx(context->window, height, width);
 
-	struct dimension d = {height, width};
+	struct dimension d = { height, width };
 
 	return (d);
 }

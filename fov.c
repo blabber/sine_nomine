@@ -31,14 +31,14 @@ fov_calculate(struct player player, struct level *level)
 			level->tiles[y][x] &= ~TA_VISIBLE;
 	}
 
-
 	for (int16_t yoff = -player.range; yoff <= player.range; yoff++) {
 		int16_t y = player.position.y + yoff;
 
 		if (y < 0 || y > level->dimension.height - 1)
 			continue;
 
-		for (int16_t xoff = -player.range; xoff <= player.range; xoff++) {
+		for (int16_t xoff = -player.range; xoff <= player.range;
+		     xoff++) {
 			int16_t x = player.position.x + xoff;
 
 			if (x < 0 || x > level->dimension.width - 1)
@@ -48,7 +48,7 @@ fov_calculate(struct player player, struct level *level)
 			if (round(len) > (double)player.range)
 				continue;
 
-			struct coordinate p = {y, x};
+			struct coordinate p = { y, x };
 			struct bresenham_line *l =
 			    bresenham_create_line(player.position, p);
 

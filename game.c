@@ -28,22 +28,24 @@ struct game {
 	struct ui_context *ui;
 };
 
-static bool _validate_player_position(struct player candidate,
-    struct level *level);
+static bool _validate_player_position(
+    struct player candidate, struct level *level);
 
 static void _apply_effects(struct game *game);
 
-struct game *game_create(struct game_configuration config) {
+struct game *
+game_create(struct game_configuration config)
+{
 	sranddev();
 
 	struct game *g = calloc(1, sizeof(struct game));
 	g->ui = ui_create();
 
-	struct dimension d = {config.height, config.width};
-	struct dimension min = {config.roomsize.min, config.roomsize.min};
-	struct dimension max = {config.roomsize.max, config.roomsize.max};
+	struct dimension d = { config.height, config.width };
+	struct dimension min = { config.roomsize.min, config.roomsize.min };
+	struct dimension max = { config.roomsize.max, config.roomsize.max };
 
-	g->player = (struct player){.range = config.range};
+	g->player = (struct player) { .range = config.range };
 	g->level = level_create(d, config.rooms, min, max);
 
 	uint8_t torches =
@@ -71,14 +73,16 @@ struct game *game_create(struct game_configuration config) {
 	return (g);
 }
 
-void game_destroy(struct game *game)
+void
+game_destroy(struct game *game)
 {
 	ui_destroy(game->ui);
 	level_destroy(game->level);
 	free(game);
 }
 
-void game_loop(struct game *game)
+void
+game_loop(struct game *game)
 {
 	bool running = true;
 	while (running) {
@@ -153,5 +157,4 @@ _apply_effects(struct game *game)
 	}
 
 	game->player = player;
-
 }

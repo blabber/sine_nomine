@@ -33,7 +33,7 @@ struct ui_context *ui_create(void);
 
 void ui_destroy(struct ui_context *_context);
 
-void ui_display(struct ui_context *_context, struct player player,
-    struct level *_level);
+void ui_display(
+    struct ui_context *_context, struct player player, struct level *_level);
 
 UI_ACTION ui_get_action(struct ui_context *_context);

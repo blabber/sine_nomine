@@ -30,8 +30,8 @@
  * This is a C conversion of the Python implementation that can be found here:
  * http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm#Python
  */
-struct bresenham_line *bresenham_create_line(struct coordinate start,
-    struct coordinate stop)
+struct bresenham_line *
+bresenham_create_line(struct coordinate start, struct coordinate stop)
 {
 	/* Setup initial conditions */
 	int16_t dx = stop.x - start.x;
@@ -45,8 +45,8 @@ struct bresenham_line *bresenham_create_line(struct coordinate start,
 		struct coordinate p1 = start;
 		struct coordinate p2 = stop;
 
-		start = (struct coordinate){p1.x, p1.y};
-		stop = (struct coordinate){p2.x, p2.y};
+		start = (struct coordinate) { p1.x, p1.y };
+		stop = (struct coordinate) { p2.x, p2.y };
 	}
 
 	/* Swap start and end points if necessary and store swap state */
@@ -55,8 +55,8 @@ struct bresenham_line *bresenham_create_line(struct coordinate start,
 		struct coordinate p1 = start;
 		struct coordinate p2 = stop;
 
-		start = (struct coordinate){p2.y, p2.x};
-		stop = (struct coordinate){p1.y, p1.x};
+		start = (struct coordinate) { p2.y, p2.x };
+		stop = (struct coordinate) { p1.y, p1.x };
 
 		swapped = true;
 	}
@@ -97,9 +97,9 @@ struct bresenham_line *bresenham_create_line(struct coordinate start,
 
 		struct coordinate p;
 		if (is_steep)
-		    p = (struct coordinate){x, y};
+			p = (struct coordinate) { x, y };
 		else
-		    p = (struct coordinate){y, x};
+			p = (struct coordinate) { y, x };
 
 		line->points[line->elements - 1] = p;
 

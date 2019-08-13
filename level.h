@@ -37,5 +37,5 @@ struct level *level_create(struct dimension _level, uint8_t rooms,
 
 void level_destroy(struct level *_level);
 
-void level_modify_random_floor_tiles(struct level *_level, uint8_t _count,
-		uint8_t _mask);
+void level_modify_random_floor_tiles(
+    struct level *_level, uint8_t _count, uint8_t _mask);

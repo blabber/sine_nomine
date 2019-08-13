@@ -24,7 +24,7 @@ struct coordinate {
 
 struct player {
 	struct coordinate position;
-	uint8_t	range;
+	uint8_t range;
 };
 
 struct offset {

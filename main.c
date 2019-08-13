@@ -26,8 +26,7 @@
 #include "structs.h"
 #include "ui.h"
 
-enum {
-	HEIGHT = 100,
+enum { HEIGHT = 100,
 	WIDTH = 100,
 	RANGE = 4,
 	ROOMS = 5,
@@ -37,17 +36,18 @@ enum {
 	TORCHESMAX = 20,
 };
 
-static struct option long_options[] =
-	{
-		{"help",    no_argument,       0, 1},
-		{"rooms",   required_argument, 0, 2},
-		{"height",  required_argument, 0, 3},
-		{"width",   required_argument, 0, 4},
-		{"range",   required_argument, 0, 5},
-		{0, 0, 0, 0}
-	};
+/* clang-format off */
+static struct option long_options[] = {
+	{ "help",   no_argument,       0,    1},
+	{ "rooms",  required_argument, 0,    2},
+	{ "height", required_argument, 0,    3},
+	{ "width",  required_argument, 0,    4},
+	{ "range",  required_argument, 0,    5},
+	{ NULL,     0,                 NULL, 0}
+};
+/* clang-format on */
 
-static void _print_help(char** argv);
+static void _print_help(char **argv);
 
 int
 main(int argc, char **argv)
@@ -57,20 +57,33 @@ main(int argc, char **argv)
 		.width = WIDTH,
 		.range = RANGE,
 		.rooms = ROOMS,
-		.roomsize = (struct range){ROOMMINSIZE, ROOMMAXSIZE},
-		.torches = (struct range){TORCHESMIN, TORCHESMAX},
+		.roomsize = (struct range) { ROOMMINSIZE, ROOMMAXSIZE },
+		.torches = (struct range) { TORCHESMIN, TORCHESMAX },
 	};
 
 	/* options parsing */
 	int option, long_index;
-	while ((option = getopt_long_only(argc, argv, "", long_options, &long_index)) != -1) {
+	while ((option = getopt_long_only(
+		    argc, argv, "", long_options, &long_index)) != -1) {
 		switch (option) {
-			case 1: _print_help(argv); exit(EXIT_SUCCESS);
-			case 2: config.rooms  = strtol(optarg, NULL, 10); break;
-			case 3: config.height = strtol(optarg, NULL, 10); break;
-			case 4: config.width  = strtol(optarg, NULL, 10); break;
-			case 5: config.range  = strtol(optarg, NULL, 10); break;
-			default: _print_help(argv); exit(EXIT_FAILURE);
+		case 1:
+			_print_help(argv);
+			exit(EXIT_SUCCESS);
+		case 2:
+			config.rooms = strtol(optarg, NULL, 10);
+			break;
+		case 3:
+			config.height = strtol(optarg, NULL, 10);
+			break;
+		case 4:
+			config.width = strtol(optarg, NULL, 10);
+			break;
+		case 5:
+			config.range = strtol(optarg, NULL, 10);
+			break;
+		default:
+			_print_help(argv);
+			exit(EXIT_FAILURE);
 		}
 	}
 	if (config.range > 15)
@@ -87,12 +100,15 @@ main(int argc, char **argv)
 	return (EXIT_SUCCESS);
 }
 
-static void _print_help(char **argv)
+static void
+_print_help(char **argv)
 {
+	/* clang-format off */
 	printf("Usage: %s [options]\n", argv[0]);
 	printf("       --help                 print this help\n");
 	printf("       --rooms  <number>      number of rooms to generate\n");
 	printf("       --height <number>      height of the full map\n");
 	printf("       --width  <number>      width of the full map\n");
 	printf("       --range  <number>      FOV range for the player to start with\n");
+	/* clang-format on */
 }
