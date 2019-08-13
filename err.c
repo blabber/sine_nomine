@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include <assert.h>
+#include <curses.h>
 #include <errno.h>
 #include <string.h>
 
@@ -55,6 +56,8 @@ die(const char *fmt, ...)
 static void
 _err(bool print_errno, const char *fmt, va_list ap)
 {
+	endwin();
+
 	vfprintf(stderr, fmt, ap);
 	
 	if (print_errno)
