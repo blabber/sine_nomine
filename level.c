@@ -35,8 +35,6 @@ static void _carve_room(struct level *_level, struct coordinate *_anchor,
 static void _connect_anchors(struct level *_level, uint8_t _rooms,
     struct coordinate _anchors[]);
 
-static void _remove_redundant_walls(struct level *_level);
-
 struct level *
 level_create(struct dimension d, uint8_t rooms, struct dimension room_min,
     struct dimension room_max)
@@ -116,8 +114,6 @@ _generate_dungeon(struct level *level, uint8_t rooms,
 
 	for (uint8_t i = 0; i < rooms - 1; i++)
 		_connect_anchors(level, rooms, anchors);
-
-	_remove_redundant_walls(level);
 }
 
 static void _carve_room(struct level *level, struct coordinate *anchor,
@@ -175,58 +171,6 @@ static void _connect_anchors(struct level *level, uint8_t rooms,
 
 		for (uint8_t y = ay; y <= by; y++) {
 			level->tiles[y][stop.x] = TA_FLOOR;
-		}
-	}
-}
-
-/*
- * Clear out obsolete walls. This is eye candy, that will no longer be
- * necesarry, once Field of View and Fog of War are implemented.
- */
-static void _remove_redundant_walls(struct level *level)
-{
-	for (uint8_t y = 0; y < level->dimension.height; y++) {
-		for (uint8_t x = 0; x < level->dimension.width; x++) {
-			if (!(level->tiles[y][x] & TA_WALL))
-				continue;
-
-			bool t = y == 0;
-			bool b = y == level->dimension.height -1;
-			bool l = x == 0;
-			bool r = x == level->dimension.width - 1;
-
-			bool erase = true;
-
-			if (!t) {
-				if (level->tiles[y-1][x] & TA_FLOOR)
-					erase = false;
-
-				if (!l && level->tiles[y-1][x-1] & TA_FLOOR)
-					erase = false;
-
-				if (!r && level->tiles[y-1][x+1] & TA_FLOOR)
-					erase = false;
-			}
-
-			if (!b) {
-				if (level->tiles[y+1][x] & TA_FLOOR)
-					erase = false;
-
-				if (!l && level->tiles[y+1][x-1] & TA_FLOOR)
-					erase = false;
-
-				if (!r && level->tiles[y+1][x+1] & TA_FLOOR)
-					erase = false;
-			}
-
-			if (!l && level->tiles[y][x-1] & TA_FLOOR)
-				erase = false;
-
-			if (!r && level->tiles[y][x+1] & TA_FLOOR)
-				erase = false;
-
-			if (erase)
-				level->tiles[y][x] = TA_BLANK;
 		}
 	}
 }

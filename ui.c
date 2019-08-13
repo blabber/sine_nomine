@@ -22,6 +22,10 @@
 #include "level.h"
 #include "ui.h"
 
+enum {
+	CP_VISIBLE = 1,
+};
+
 struct ui_context {
 	WINDOW *window;
 };
@@ -41,6 +45,9 @@ ui_create(void)
 	cbreak();
 	noecho();
 	keypad(c->window, TRUE);
+
+	start_color();
+	init_pair(CP_VISIBLE, COLOR_GREEN, COLOR_BLACK);
 
 	return (c);
 }
@@ -74,17 +81,27 @@ void ui_display(struct ui_context *context, struct coordinate player,
 			if ((x + offset.x) < 0)
 				continue;
 
+			if (!(level->tiles[y][x] & TA_KNOWN))
+				continue;
+
+			wattrset(context->window, A_NORMAL);
+			if (level->tiles[y][x] & TA_VISIBLE) {
+				wattron(context->window,
+				    COLOR_PAIR(CP_VISIBLE));
+
+				wattron(context->window, A_BOLD);
+			}
+
 			char t = '#';
 			if (level->tiles[y][x] & TA_FLOOR)
 				t = '.';
-			else if (level->tiles[y][x] & TA_BLANK)
-				t = ' ';
 
 			mvwaddch(context->window,
 			    y + offset.y, x + offset.x, t);
 		}
 	}
 
+	wattrset(context->window, A_NORMAL);
 	mvwaddch(context->window, center.y, center.x, '@');
 
 	wmove(context->window, screen.height - 1 , screen.width - 1);

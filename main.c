@@ -16,6 +16,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "fov.h"
 #include "level.h"
 #include "structs.h"
 #include "ui.h"
@@ -66,6 +67,7 @@ main()
 
 	bool running = true;
 	while (running) {
+		fov_calculate(player, level);
 		ui_display(ui, player, level);
 
 		struct coordinate np = player;

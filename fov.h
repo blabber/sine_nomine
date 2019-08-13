@@ -15,23 +15,7 @@
 
 #pragma once
 
-#include <stdint.h>
-
+#include "level.h"
 #include "structs.h"
 
-typedef enum {
-	TA_FLOOR = 1U << 0,
-	TA_WALL = 1U << 1,
-	TA_VISIBLE = 1U << 2,
-	TA_KNOWN = 1U << 3,
-} TILE_ATTRIBUTE;
-
-struct level {
-	struct dimension dimension;
-	uint8_t **tiles;
-};
-
-struct level *level_create(struct dimension _level, uint8_t rooms,
-    struct dimension _room_min, struct dimension _room_max);
-
-void level_destroy(struct level *_level);
+void fov_calculate(struct coordinate _player, struct level *_level);

@@ -17,21 +17,13 @@
 
 #include <stdint.h>
 
-#include "structs.h"
-
-typedef enum {
-	TA_FLOOR = 1U << 0,
-	TA_WALL = 1U << 1,
-	TA_VISIBLE = 1U << 2,
-	TA_KNOWN = 1U << 3,
-} TILE_ATTRIBUTE;
-
-struct level {
-	struct dimension dimension;
-	uint8_t **tiles;
+struct bresenham_line {
+	uint8_t capacity;
+	uint8_t elements;
+	struct coordinate *points;
 };
 
-struct level *level_create(struct dimension _level, uint8_t rooms,
-    struct dimension _room_min, struct dimension _room_max);
+struct bresenham_line *bresenham_create_line(struct coordinate _start,
+    struct coordinate _stop);
 
-void level_destroy(struct level *_level);
+void bresenham_free_line(struct bresenham_line *_line);
