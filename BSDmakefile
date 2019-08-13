@@ -3,6 +3,7 @@ SRCS=		main.c \
 		bresenham.c \
 		err.c \
 		fov.c \
+		game.c \
 		level.c \
 		ui.c \
 

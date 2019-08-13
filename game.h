@@ -17,25 +17,22 @@
 
 #include <stdint.h>
 
+#include "level.h"
 #include "structs.h"
 
-typedef enum {
-	TA_FLOOR = 1U << 0,
-	TA_WALL = 1U << 1,
-	TA_VISIBLE = 1U << 2,
-	TA_KNOWN = 1U << 3,
-	TA_TORCH = 1U << 4,
-} TILE_ATTRIBUTE;
+struct game;
 
-struct level {
-	struct dimension dimension;
-	uint8_t **tiles;
+struct game_configuration {
+	uint8_t height;
+	uint8_t width;
+	uint8_t rooms;
+	uint8_t range;
+	struct range roomsize;
+	struct range torches;
 };
 
-struct level *level_create(struct dimension _level, uint8_t rooms,
-    struct dimension _room_min, struct dimension _room_max);
+struct game *game_create(struct game_configuration _config);
 
-void level_destroy(struct level *_level);
+void game_destroy(struct game *_game);
 
-void level_modify_random_floor_tiles(struct level *_level, uint8_t _count,
-		uint8_t _mask);
+void game_loop(struct game *_game);

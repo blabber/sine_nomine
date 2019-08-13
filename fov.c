@@ -19,6 +19,7 @@
 
 #include "bresenham.h"
 #include "fov.h"
+#include "game.h"
 #include "level.h"
 #include "structs.h"
 

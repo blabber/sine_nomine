@@ -19,19 +19,22 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include "err.h"
 #include "fov.h"
+#include "game.h"
 #include "level.h"
 #include "structs.h"
 #include "ui.h"
 
-#define START_RANGE  4
-
 enum {
 	HEIGHT = 100,
 	WIDTH = 100,
+	RANGE = 4,
 	ROOMS = 5,
 	ROOMMINSIZE = 10,
 	ROOMMAXSIZE = 20,
+	TORCHESMIN = 5,
+	TORCHESMAX = 20,
 };
 
 static struct option long_options[] =
@@ -45,126 +48,43 @@ static struct option long_options[] =
 	};
 
 static void _print_help(char** argv);
-static bool _validate_player_position(struct player *_candidate);
-
-static struct level *level;
 
 int
 main(int argc, char **argv)
 {
-	int rooms = ROOMS, height = HEIGHT, width = WIDTH, range = START_RANGE;
+	struct game_configuration config = {
+		.height = HEIGHT,
+		.width = WIDTH,
+		.range = RANGE,
+		.rooms = ROOMS,
+		.roomsize = (struct range){ROOMMINSIZE, ROOMMAXSIZE},
+		.torches = (struct range){TORCHESMIN, TORCHESMAX},
+	};
 
 	/* options parsing */
 	int option, long_index;
 	while ((option = getopt_long_only(argc, argv, "", long_options, &long_index)) != -1) {
 		switch (option) {
-			case 1: _print_help(argv);exit(EXIT_SUCCESS);
-			case 2: rooms  = strtol(optarg, NULL, 10); break;
-			case 3: height = strtol(optarg, NULL, 10); break;
-			case 4: width  = strtol(optarg, NULL, 10); break;
-			case 5: range  = strtol(optarg, NULL, 10); break;
+			case 1: _print_help(argv); exit(EXIT_SUCCESS);
+			case 2: config.rooms  = strtol(optarg, NULL, 10); break;
+			case 3: config.height = strtol(optarg, NULL, 10); break;
+			case 4: config.width  = strtol(optarg, NULL, 10); break;
+			case 5: config.range  = strtol(optarg, NULL, 10); break;
 			default: _print_help(argv); exit(EXIT_FAILURE);
 		}
 	}
-	if (range > 50) {
-		printf("error: range cannot be bigger than 50\n");
-		exit(EXIT_FAILURE);
-	}
+	if (config.range > 15)
+		die("error: range must not be bigger than 15\n");
+	if (config.width < 25)
+		die("error: width must not be smaller than 25\n");
+	if (config.height < 25)
+		die("error: width must not be smaller than 25\n");
 
-	struct ui_context *ui = ui_create();
-	{
-		struct dimension d = {height, width};
-		struct dimension min = {ROOMMINSIZE, ROOMMINSIZE};
-		struct dimension max = {ROOMMAXSIZE, ROOMMAXSIZE};
-
-		level = level_create(d, rooms, min, max);
-	}
-
-	struct player player = {.range = range};
-
-	/*
-	 * Place player somewhere on the floor. The starting position should be
-	 * determined by the dungeon generation algorithm. This in not yet
-	 * implemented.
-	 */
-	while (true) {
-		uint8_t y = rand() % (level->dimension.height);
-		uint8_t x = rand() % (level->dimension.width);
-
-		if (level->tiles[y][x] & TA_FLOOR) {
-			player.position.y = y;
-			player.position.x = x;
-
-			break;
-		}
-	}
-
-	bool running = true;
-	while (running) {
-		fov_calculate(player, level);
-		ui_display(ui, player, level);
-
-		struct player np = player;
-
-		/* Get user input and act on it. */
-		switch (ui_get_action(ui)) {
-		case UA_UP:
-			np.position.y--;
-			break;
-
-		case UA_DOWN:
-			np.position.y++;
-			break;
-
-		case UA_LEFT:
-			np.position.x--;
-			break;
-
-		case UA_RIGHT:
-			np.position.x++;
-			break;
-
-		case UA_QUIT:
-			running = false;
-			break;
-
-		case UA_UNKNOWN:
-			break;
-		}
-
-		if (_validate_player_position(&np))
-			player = np;
-	}
-
-	ui_destroy(ui);
+	struct game *game = game_create(config);
+	game_loop(game);
+	game_destroy(game);
 
 	return (EXIT_SUCCESS);
-}
-
-static bool
-_validate_player_position(struct player *c)
-{
-	if (c->position.x < 0)
-		return false;
-
-	if (c->position.x > level->dimension.width - 1)
-		return false;
-
-	if (c->position.y < 0)
-		return false;
-
-	if (c->position.y > level->dimension.height - 1)
-		return false;
-
-	if (level->tiles[c->position.y][c->position.x] & TA_WALL)
-		return false;
-
-	if (level->tiles[c->position.y][c->position.x] & TA_TORCH) {
-		level->tiles[c->position.y][c->position.x] &= ~TA_TORCH;
-		c->range++;
-	}
-
-	return true;
 }
 
 static void _print_help(char **argv)

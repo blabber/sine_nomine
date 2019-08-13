@@ -15,7 +15,6 @@
 
 #pragma once
 
-#include "level.h"
-#include "structs.h"
+#include "game.h"
 
 void fov_calculate(struct player _player, struct level *_level);

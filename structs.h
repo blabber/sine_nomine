@@ -36,3 +36,8 @@ struct dimension {
 	uint8_t height;
 	uint8_t width;
 };
+
+struct range {
+	int16_t min;
+	int16_t max;
+};

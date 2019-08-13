@@ -15,6 +15,6 @@
 
 #pragma once
 
-void err(const char *fmt, ...);
+void err(const char *_fmt, ...);
 
-void die(const char *fmt, ...);
+void die(const char *_fmt, ...);
