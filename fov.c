@@ -44,9 +44,6 @@ fov_calculate(struct player player, struct level *level)
 			if (x < 0 || x > level->dimension.width - 1)
 				continue;
 
-			if (level->tiles[y][x] & TA_VISIBLE)
-				continue;
-
 			double len = hypot((double)xoff, (double)yoff);
 			if (round(len) > (double)player.range)
 				continue;
