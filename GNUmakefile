@@ -1,6 +1,6 @@
-CC = clang
-LDFLAGS=-lncurses -lm
-CFLAGS = -std=c11 -Wall
+CC ?= clang
+LDFLAGS = -lncurses -lm
+CFLAGS ?= -std=c11 -Wall
 
 TARGET = sn
 SRC=$(wildcard *.c)
