@@ -59,10 +59,10 @@ main(int argc, char **argv)
 	while ((option = getopt_long_only(argc, argv, "", long_options, &long_index)) != -1) {
 		switch (option) {
 			case 1: _print_help(argv);exit(EXIT_SUCCESS);
-			case 2: rooms  = atoi(optarg); break;
-			case 3: height = atoi(optarg); break;
-			case 4: width  = atoi(optarg); break;
-			case 5: range  = atoi(optarg); break;
+			case 2: rooms  = strtol(optarg, NULL, 10); break;
+			case 3: height = strtol(optarg, NULL, 10); break;
+			case 4: width  = strtol(optarg, NULL, 10); break;
+			case 5: range  = strtol(optarg, NULL, 10); break;
 			default: _print_help(argv); exit(EXIT_FAILURE);
 		}
 	}
