@@ -1,2 +1,8 @@
 sn
 *.o
+*.debug
+*.full
+*.core
+.depend*
+.tags
+object/
