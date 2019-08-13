@@ -76,7 +76,7 @@ struct bresenham_line *bresenham_create_line(struct coordinate start,
 
 	assert(line != NULL);
 
-	line->capacity = 50; //FIXME: should be depending on current player range
+	line->capacity = 10;
 	line->points = calloc(line->capacity, sizeof(struct coordinate));
 	if (line->points == NULL)
 		err("bresenham_create_line: calloc");
