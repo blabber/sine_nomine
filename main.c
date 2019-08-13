@@ -15,6 +15,9 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <getopt.h>
 
 #include "fov.h"
 #include "level.h"
@@ -31,24 +34,53 @@ enum {
 	ROOMMAXSIZE = 20,
 };
 
+static struct option long_options[] =
+	{
+		{"help",    no_argument,       0, 1},
+		{"rooms",   required_argument, 0, 2},
+		{"height",  required_argument, 0, 3},
+		{"width",   required_argument, 0, 4},
+		{"range",   required_argument, 0, 5},
+		{0, 0, 0, 0}
+	};
+
+static void _print_help(char** argv);
 static bool _validate_player_position(struct player *_candidate);
 
 static struct level *level;
 
 int
-main()
+main(int argc, char **argv)
 {
-	struct ui_context *ui = ui_create();
+	int rooms = ROOMS, height = HEIGHT, width = WIDTH, range = START_RANGE;
 
+	/* options parsing */
+	int option, long_index;
+	while ((option = getopt_long_only(argc, argv, "", long_options, &long_index)) != -1) {
+		switch (option) {
+			case 1: _print_help(argv);exit(EXIT_SUCCESS);
+			case 2: rooms  = atoi(optarg); break;
+			case 3: height = atoi(optarg); break;
+			case 4: width  = atoi(optarg); break;
+			case 5: range  = atoi(optarg); break;
+			default: _print_help(argv); exit(EXIT_FAILURE);
+		}
+	}
+	if (range > 50) {
+		printf("error: range cannot be bigger than 50\n");
+		exit(EXIT_FAILURE);
+	}
+
+	struct ui_context *ui = ui_create();
 	{
-		struct dimension d = {HEIGHT, WIDTH};
+		struct dimension d = {height, width};
 		struct dimension min = {ROOMMINSIZE, ROOMMINSIZE};
 		struct dimension max = {ROOMMAXSIZE, ROOMMAXSIZE};
 
-		level = level_create(d, ROOMS, min, max);
+		level = level_create(d, rooms, min, max);
 	}
 
-	struct player player = {.range = START_RANGE};
+	struct player player = {.range = range};
 
 	/*
 	 * Place player somewhere on the floor. The starting position should be
@@ -133,4 +165,14 @@ _validate_player_position(struct player *c)
 	}
 
 	return true;
+}
+
+static void _print_help(char **argv)
+{
+	printf("Usage: %s [options]\n", argv[0]);
+	printf("       --help                 print this help\n");
+	printf("       --rooms  <number>      number of rooms to generate\n");
+	printf("       --height <number>      height of the full map\n");
+	printf("       --width  <number>      width of the full map\n");
+	printf("       --range  <number>      FOV range for the player to start with\n");
 }
