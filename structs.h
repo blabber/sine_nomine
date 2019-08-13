@@ -23,7 +23,7 @@ struct coordinate {
 };
 
 struct player {
-	struct coordinate pos;
+	struct coordinate position;
 	uint8_t	range;
 };
 

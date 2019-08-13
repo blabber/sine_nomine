@@ -69,8 +69,8 @@ void ui_display(struct ui_context *context, struct player p,
 	struct coordinate center = {screen.height/2, screen.width/2};
 
 	struct offset offset = {0};
-	offset.y = center.y - p.pos.y;
-	offset.x = center.x - p.pos.x;
+	offset.y = center.y - p.position.y;
+	offset.x = center.x - p.position.x;
 
 	werase(context->window);
 	for (uint8_t y = 0; y < level->dimension.height; y++) {

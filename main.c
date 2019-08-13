@@ -92,8 +92,8 @@ main(int argc, char **argv)
 		uint8_t x = rand() % (level->dimension.width);
 
 		if (level->tiles[y][x] & TA_FLOOR) {
-			player.pos.y = y;
-			player.pos.x = x;
+			player.position.y = y;
+			player.position.x = x;
 
 			break;
 		}
@@ -109,19 +109,19 @@ main(int argc, char **argv)
 		/* Get user input and act on it. */
 		switch (ui_get_action(ui)) {
 		case UA_UP:
-			np.pos.y--;
+			np.position.y--;
 			break;
 
 		case UA_DOWN:
-			np.pos.y++;
+			np.position.y++;
 			break;
 
 		case UA_LEFT:
-			np.pos.x--;
+			np.position.x--;
 			break;
 
 		case UA_RIGHT:
-			np.pos.x++;
+			np.position.x++;
 			break;
 
 		case UA_QUIT:
@@ -144,23 +144,23 @@ main(int argc, char **argv)
 static bool
 _validate_player_position(struct player *c)
 {
-	if (c->pos.x < 0)
+	if (c->position.x < 0)
 		return false;
 
-	if (c->pos.x > level->dimension.width - 1)
+	if (c->position.x > level->dimension.width - 1)
 		return false;
 
-	if (c->pos.y < 0)
+	if (c->position.y < 0)
 		return false;
 
-	if (c->pos.y > level->dimension.height - 1)
+	if (c->position.y > level->dimension.height - 1)
 		return false;
 
-	if (level->tiles[c->pos.y][c->pos.x] & TA_WALL)
+	if (level->tiles[c->position.y][c->position.x] & TA_WALL)
 		return false;
 
-	if (level->tiles[c->pos.y][c->pos.x] & TA_TORCH) {
-		level->tiles[c->pos.y][c->pos.x] &= ~TA_TORCH;
+	if (level->tiles[c->position.y][c->position.x] & TA_TORCH) {
+		level->tiles[c->position.y][c->position.x] &= ~TA_TORCH;
 		c->range++;
 	}
 

@@ -32,13 +32,13 @@ fov_calculate(struct player player, struct level *level)
 
 
 	for (int16_t yoff = -player.range; yoff <= player.range; yoff++) {
-		int16_t y = player.pos.y + yoff;
+		int16_t y = player.position.y + yoff;
 
 		if (y < 0 || y > level->dimension.height - 1)
 			continue;
 
 		for (int16_t xoff = -player.range; xoff <= player.range; xoff++) {
-			int16_t x = player.pos.x + xoff;
+			int16_t x = player.position.x + xoff;
 
 			if (x < 0 || x > level->dimension.width - 1)
 				continue;
@@ -52,7 +52,7 @@ fov_calculate(struct player player, struct level *level)
 
 			struct coordinate p = {y, x};
 			struct bresenham_line *l =
-			    bresenham_create_line(player.pos, p);
+			    bresenham_create_line(player.position, p);
 
 			for (uint8_t i = 0; i < l->elements; i++) {
 				struct coordinate v = l->points[i];
