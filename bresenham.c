@@ -76,7 +76,7 @@ struct bresenham_line *bresenham_create_line(struct coordinate start,
 
 	assert(line != NULL);
 
-	line->capacity = 10;
+	line->capacity = 50; //FIXME: should be depending on current player range
 	line->points = calloc(line->capacity, sizeof(struct coordinate));
 	if (line->points == NULL)
 		err("bresenham_create_line: calloc");
@@ -113,7 +113,7 @@ struct bresenham_line *bresenham_create_line(struct coordinate start,
 	/* Reverse the list if the coordinates were swapped */
 	if (swapped) {
 		struct coordinate *op = line->points;
-		
+
 		line->points =
 		    calloc(line->elements, sizeof(struct coordinate));
 		if (line->points == NULL)

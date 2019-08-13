@@ -18,4 +18,4 @@
 #include "level.h"
 #include "structs.h"
 
-void fov_calculate(struct coordinate _player, struct level *_level);
+void fov_calculate(struct player _player, struct level *_level);
