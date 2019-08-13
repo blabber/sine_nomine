@@ -19,11 +19,15 @@
 
 #include "structs.h"
 
+#define MAX_TORCHES 20
+#define MIN_TORCHES  5
+
 typedef enum {
 	TA_FLOOR = 1U << 0,
 	TA_WALL = 1U << 1,
 	TA_VISIBLE = 1U << 2,
 	TA_KNOWN = 1U << 3,
+	TA_TORCH = 1U << 4,
 } TILE_ATTRIBUTE;
 
 struct level {

@@ -35,6 +35,8 @@ static void _carve_room(struct level *_level, struct coordinate *_anchor,
 static void _connect_anchors(struct level *_level, uint8_t _rooms,
     struct coordinate _anchors[]);
 
+static void _place_torches(struct level *level);
+
 struct level *
 level_create(struct dimension d, uint8_t rooms, struct dimension room_min,
     struct dimension room_max)
@@ -60,7 +62,7 @@ void level_destroy(struct level *level)
 	for (uint8_t y = 0; y < level->dimension.height; y++) {
 		free(level->tiles[y]);
 	}
-	
+
 	free(level->tiles);
 	free(level);
 }
@@ -114,6 +116,8 @@ _generate_dungeon(struct level *level, uint8_t rooms,
 
 	for (uint8_t i = 0; i < rooms - 1; i++)
 		_connect_anchors(level, rooms, anchors);
+
+	_place_torches(level);
 }
 
 static void _carve_room(struct level *level, struct coordinate *anchor,
@@ -171,6 +175,23 @@ static void _connect_anchors(struct level *level, uint8_t rooms,
 
 		for (uint8_t y = ay; y <= by; y++) {
 			level->tiles[y][stop.x] = TA_FLOOR;
+		}
+	}
+}
+
+static void _place_torches(struct level *level)
+{
+  uint8_t torches = (rand() % (MAX_TORCHES - MIN_TORCHES)) + MIN_TORCHES;
+
+	for (uint8_t i = 1; i < torches; i++) {
+		while (true) {
+			uint8_t y = rand() % (level->dimension.height);
+			uint8_t x = rand() % (level->dimension.width);
+
+			if (level->tiles[y][x] & TA_FLOOR) {
+				level->tiles[y][x] |= TA_TORCH;
+				break;
+			}
 		}
 	}
 }

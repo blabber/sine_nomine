@@ -59,7 +59,7 @@ void ui_destroy(struct ui_context *context)
 	endwin();
 }
 
-void ui_display(struct ui_context *context, struct coordinate player,
+void ui_display(struct ui_context *context, struct player p,
     struct level *level)
 {
 	assert(context != NULL);
@@ -69,8 +69,8 @@ void ui_display(struct ui_context *context, struct coordinate player,
 	struct coordinate center = {screen.height/2, screen.width/2};
 
 	struct offset offset = {0};
-	offset.y = center.y - player.y;
-	offset.x = center.x - player.x;
+	offset.y = center.y - p.pos.y;
+	offset.x = center.x - p.pos.x;
 
 	werase(context->window);
 	for (uint8_t y = 0; y < level->dimension.height; y++) {
@@ -95,6 +95,8 @@ void ui_display(struct ui_context *context, struct coordinate player,
 			char t = '#';
 			if (level->tiles[y][x] & TA_FLOOR)
 				t = '.';
+			if (level->tiles[y][x] & TA_TORCH)
+				t = 'T';
 
 			mvwaddch(context->window,
 			    y + offset.y, x + offset.x, t);
@@ -121,15 +123,15 @@ ui_get_action(struct ui_context *context)
 		return (UA_UP);
 
 	case KEY_DOWN:
-	case 'j': 
+	case 'j':
 		return (UA_DOWN);
 
 	case KEY_LEFT:
-	case 'h': 
+	case 'h':
 		return (UA_LEFT);
 
 	case KEY_RIGHT:
-	case 'l': 
+	case 'l':
 		return (UA_RIGHT);
 
 	case 'q':

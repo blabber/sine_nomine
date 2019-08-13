@@ -21,7 +21,9 @@
 #include "structs.h"
 #include "ui.h"
 
-enum { 
+#define START_RANGE  4
+
+enum {
 	HEIGHT = 100,
 	WIDTH = 100,
 	ROOMS = 5,
@@ -29,7 +31,7 @@ enum {
 	ROOMMAXSIZE = 20,
 };
 
-static bool _validate_player_position(struct coordinate _candidate);
+static bool _validate_player_position(struct player *_candidate);
 
 static struct level *level;
 
@@ -46,7 +48,7 @@ main()
 		level = level_create(d, ROOMS, min, max);
 	}
 
-	struct coordinate player;
+	struct player player = {.range = START_RANGE};
 
 	/*
 	 * Place player somewhere on the floor. The starting position should be
@@ -58,8 +60,8 @@ main()
 		uint8_t x = rand() % (level->dimension.width);
 
 		if (level->tiles[y][x] & TA_FLOOR) {
-			player.y = y;
-			player.x = x;
+			player.pos.y = y;
+			player.pos.x = x;
 
 			break;
 		}
@@ -70,24 +72,24 @@ main()
 		fov_calculate(player, level);
 		ui_display(ui, player, level);
 
-		struct coordinate np = player;
+		struct player np = player;
 
 		/* Get user input and act on it. */
 		switch (ui_get_action(ui)) {
 		case UA_UP:
-			np.y--;
+			np.pos.y--;
 			break;
 
 		case UA_DOWN:
-			np.y++;
+			np.pos.y++;
 			break;
 
 		case UA_LEFT:
-			np.x--;
+			np.pos.x--;
 			break;
 
 		case UA_RIGHT:
-			np.x++;
+			np.pos.x++;
 			break;
 
 		case UA_QUIT:
@@ -98,7 +100,7 @@ main()
 			break;
 		}
 
-		if (_validate_player_position(np))
+		if (_validate_player_position(&np))
 			player = np;
 	}
 
@@ -108,22 +110,27 @@ main()
 }
 
 static bool
-_validate_player_position(struct coordinate c)
+_validate_player_position(struct player *c)
 {
-	if (c.x < 0)
+	if (c->pos.x < 0)
 		return false;
 
-	if (c.x > level->dimension.width - 1)
+	if (c->pos.x > level->dimension.width - 1)
 		return false;
 
-	if (c.y < 0)
+	if (c->pos.y < 0)
 		return false;
 
-	if (c.y > level->dimension.height - 1)
+	if (c->pos.y > level->dimension.height - 1)
 		return false;
 
-	if (level->tiles[c.y][c.x] & TA_WALL)
+	if (level->tiles[c->pos.y][c->pos.x] & TA_WALL)
 		return false;
+
+	if (level->tiles[c->pos.y][c->pos.x] & TA_TORCH) {
+		level->tiles[c->pos.y][c->pos.x] &= ~TA_TORCH;
+		c->range++;
+	}
 
 	return true;
 }

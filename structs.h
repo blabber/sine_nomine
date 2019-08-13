@@ -22,6 +22,11 @@ struct coordinate {
 	uint8_t x;
 };
 
+struct player {
+	struct coordinate pos;
+	uint8_t	range;
+};
+
 struct offset {
 	int16_t y;
 	int16_t x;
