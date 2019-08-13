@@ -76,7 +76,8 @@ _allocate(struct dimension d)
 
 	l->dimension = d;
 
-	if ((l->tiles = calloc(l->dimension.height, sizeof(*l->tiles))) == NULL)
+	l->tiles = calloc(l->dimension.height, sizeof(*l->tiles));
+	if (l->tiles == NULL)
 	 	err("level _allocate: calloc");
 
 	assert(l->tiles != NULL);

@@ -116,6 +116,10 @@ struct bresenham_line *bresenham_create_line(struct coordinate start,
 		
 		line->points =
 		    calloc(line->elements, sizeof(struct coordinate));
+		if (line->points == NULL)
+			err("bresenham_create_line: calloc");
+
+		assert(line->points != NULL);
 
 		for (uint8_t i = 0; i < line->elements; i++) {
 			line->points[i] = op[line->elements - 1 - i];
