@@ -91,7 +91,7 @@ main(int argc, char **argv)
 	if (config.width < 25)
 		die("error: width must not be smaller than 25\n");
 	if (config.height < 25)
-		die("error: width must not be smaller than 25\n");
+		die("error: height must not be smaller than 25\n");
 
 	struct game *game = game_create(config);
 	game_loop(game);
