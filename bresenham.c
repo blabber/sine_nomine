@@ -88,7 +88,9 @@ bresenham_create_line(struct coordinate start, struct coordinate stop)
 	for (uint8_t x = start.x; x <= stop.x; x++) {
 		if (++line->elements > line->capacity) {
 			line->capacity *= 2;
-			line->points = realloc(line->points, line->capacity);
+
+			line->points = realloc(line->points,
+			    line->capacity * sizeof(struct coordinate));
 			if (line->points == NULL)
 				err("bresenham_create_line: realloc");
 

@@ -82,8 +82,6 @@ main(int argc, char **argv)
 			exit(EXIT_FAILURE);
 		}
 	}
-	if (config.range > 15)
-		die("error: range must not be bigger than 15\n");
 	if (config.width < 25)
 		die("error: width must not be smaller than 25\n");
 	if (config.height < 25)
