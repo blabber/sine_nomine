@@ -13,18 +13,14 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
+
 #include <getopt.h>
 
 #include "err.h"
-#include "fov.h"
 #include "game.h"
-#include "level.h"
 #include "structs.h"
-#include "ui.h"
 
 enum { HEIGHT = 100,
 	WIDTH = 100,
