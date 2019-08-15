@@ -107,7 +107,8 @@ _allocate(struct dimension d)
 
 		assert(l->tiles[y] != NULL);
 
-		memset(l->tiles[y], TA_WALL, l->dimension.width);
+		memset(l->tiles[y], TA_WALL,
+		    l->dimension.width * sizeof(**l->tiles));
 	}
 
 	return l;
