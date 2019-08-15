@@ -82,11 +82,11 @@ ui_display(
 			if ((x + offset.x) < 0)
 				continue;
 
-			if (!(level->tiles[y][x] & TA_KNOWN))
+			if (!(level->tiles[y][x].flags & TA_KNOWN))
 				continue;
 
 			wattrset(context->window, A_NORMAL);
-			if (level->tiles[y][x] & TA_VISIBLE) {
+			if (level->tiles[y][x].flags & TA_VISIBLE) {
 				wattron(
 				    context->window, COLOR_PAIR(CP_VISIBLE));
 
@@ -94,9 +94,9 @@ ui_display(
 			}
 
 			char t = '#';
-			if (level->tiles[y][x] & TA_FLOOR)
+			if (level->tiles[y][x].flags & TA_FLOOR)
 				t = '.';
-			if (level->tiles[y][x] & TA_TORCH)
+			if (level->tiles[y][x].flags & TA_TORCH)
 				t = 'T';
 
 			mvwaddch(

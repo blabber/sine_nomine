@@ -74,8 +74,8 @@ level_modify_random_floor_tiles(
 			unsigned int y = rand() % (level->dimension.height);
 			unsigned int x = rand() % (level->dimension.width);
 
-			if (level->tiles[y][x] & TA_FLOOR) {
-				level->tiles[y][x] |= mask;
+			if (level->tiles[y][x].flags & TA_FLOOR) {
+				level->tiles[y][x].flags |= mask;
 				break;
 			}
 		}
@@ -154,7 +154,7 @@ _carve_room(struct level *level, struct coordinate *anchor,
 
 	for (unsigned int y = 0; y < height; y++) {
 		for (unsigned int x = 0; x < width; x++)
-			level->tiles[oy + y + 1][ox + x + 1] = TA_FLOOR;
+			level->tiles[oy + y + 1][ox + x + 1].flags = TA_FLOOR;
 	}
 
 	anchor->y = oy + (rand() % height);
@@ -186,11 +186,11 @@ _connect_anchors(
 		}
 
 		for (unsigned int x = ax; x <= bx; x++) {
-			level->tiles[start.y][x] = TA_FLOOR;
+			level->tiles[start.y][x].flags = TA_FLOOR;
 		}
 
 		for (unsigned int y = ay; y <= by; y++) {
-			level->tiles[y][stop.x] = TA_FLOOR;
+			level->tiles[y][stop.x].flags = TA_FLOOR;
 		}
 	}
 }

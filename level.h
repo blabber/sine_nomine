@@ -25,9 +25,14 @@ typedef enum {
 	TA_TORCH = 1U << 4,
 } TILE_ATTRIBUTE;
 
+struct level_tile {
+	unsigned int dijkstra;
+	unsigned int flags;
+};
+
 struct level {
 	struct dimension dimension;
-	unsigned int **tiles;
+	struct level_tile **tiles;
 };
 
 struct level *level_create(struct dimension _level, unsigned int rooms,

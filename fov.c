@@ -28,7 +28,7 @@ fov_calculate(struct player player, struct level *level)
 {
 	for (unsigned int y = 0; y < level->dimension.height; y++) {
 		for (unsigned int x = 0; x < level->dimension.width; x++)
-			level->tiles[y][x] &= ~TA_VISIBLE;
+			level->tiles[y][x].flags &= ~TA_VISIBLE;
 	}
 
 	for (int yoff = -player.range;
@@ -56,10 +56,10 @@ fov_calculate(struct player player, struct level *level)
 
 			for (unsigned int i = 0; i < l->elements; i++) {
 				struct coordinate v = l->points[i];
-				level->tiles[v.y][v.x] |=
+				level->tiles[v.y][v.x].flags |=
 				    (TA_VISIBLE | TA_KNOWN);
 
-				if (level->tiles[v.y][v.x] & TA_WALL)
+				if (level->tiles[v.y][v.x].flags & TA_WALL)
 					break;
 			}
 
