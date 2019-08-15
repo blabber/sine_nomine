@@ -1,6 +1,7 @@
 PROG=		sn
 SRCS=		main.c \
 		bresenham.c \
+		dijkstra.c \
 		err.c \
 		fov.c \
 		game.c \

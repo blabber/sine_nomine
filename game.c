@@ -16,6 +16,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "dijkstra.h"
 #include "fov.h"
 #include "game.h"
 #include "structs.h"
@@ -85,6 +86,7 @@ game_loop(struct game *game)
 {
 	bool running = true;
 	while (running) {
+		dijkstra_refresh(game->player.position, game->level);
 		fov_calculate(game->player, game->level);
 		ui_display(game->ui, game->player, game->level);
 
