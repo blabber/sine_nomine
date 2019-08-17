@@ -16,6 +16,7 @@
 #include <stdlib.h>
 
 #include <assert.h>
+#include <limits.h>
 
 #include "dijkstra.h"
 #include "err.h"
@@ -34,14 +35,18 @@ struct _tile_queue *_enqueue(struct _tile_queue *_tail,
 struct _tile_queue *_dequeue(struct _tile_queue *_head);
 
 void
-dijkstra_refresh(struct coordinate origin, struct level *level)
+dijkstra_reset(struct level *level)
 {
 	for (unsigned int y = 0; y < level->dimension.height; y++) {
 		for (unsigned int x = 0; x < level->dimension.width; x++) {
-			level->tiles[y][x].dijkstra = -1;
+			level->tiles[y][x].dijkstra = UINT_MAX;
 		}
 	}
+}
 
+void
+dijkstra_add_target(struct coordinate origin, struct level *level)
+{
 	struct _tile_queue *head, *tail;
 	head = tail = _enqueue(NULL, origin, level);
 	tail->tile->dijkstra = 0;
@@ -64,7 +69,8 @@ dijkstra_refresh(struct coordinate origin, struct level *level)
 
 			struct coordinate c = { y + off[i].y, x + off[i].x };
 
-			if (level->tiles[c.y][c.x].dijkstra >= 0)
+			if (level->tiles[c.y][c.x].dijkstra <=
+			    head->tile->dijkstra + 1)
 				continue;
 
 			if (level->tiles[c.y][c.x].flags & TA_WALL)

@@ -33,6 +33,8 @@ static bool _validate_player_position(
 
 static void _apply_effects(struct game *game);
 
+static void _create_dijkstra_map(struct game *_game);
+
 struct game *
 game_create(struct game_configuration config)
 {
@@ -86,8 +88,9 @@ game_loop(struct game *game)
 {
 	bool running = true;
 	while (running) {
-		dijkstra_refresh(game->player.position, game->level);
+		_create_dijkstra_map(game);
 		fov_calculate(game->player, game->level);
+
 		ui_display(game->ui, game->player, game->level);
 
 		struct player np = game->player;
@@ -159,4 +162,11 @@ _apply_effects(struct game *game)
 	}
 
 	game->player = player;
+}
+
+static void
+_create_dijkstra_map(struct game *game)
+{
+	dijkstra_reset(game->level);
+	dijkstra_add_target(game->player.position, game->level);
 }

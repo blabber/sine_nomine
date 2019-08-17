@@ -17,4 +17,6 @@
 
 #include "game.h"
 
-void dijkstra_refresh(struct coordinate _origin, struct level *_level);
+void dijkstra_reset(struct level *_level);
+
+void dijkstra_add_target(struct coordinate _origin, struct level *_level);
