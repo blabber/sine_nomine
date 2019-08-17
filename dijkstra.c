@@ -28,6 +28,11 @@ struct _tile_queue {
 	struct coordinate position;
 };
 
+struct _tile_queue *_enqueue(struct _tile_queue *_tail,
+    struct coordinate _position, struct level *_level);
+
+struct _tile_queue *_dequeue(struct _tile_queue *_head);
+
 void
 dijkstra_refresh(struct coordinate origin, struct level *level)
 {
@@ -38,16 +43,8 @@ dijkstra_refresh(struct coordinate origin, struct level *level)
 	}
 
 	struct _tile_queue *head, *tail;
-	head = tail = calloc(1, sizeof(struct _tile_queue));
-	if (tail == NULL)
-		err("dijkstra_refresh: calloc");
-
-	assert(head != NULL);
-
-	head->next = NULL;
-	head->tile = &level->tiles[origin.y][origin.x];
-	head->tile->dijkstra = 0;
-	head->position = (struct coordinate) { origin.y, origin.x };
+	head = tail = _enqueue(NULL, origin, level);
+	tail->tile->dijkstra = 0;
 
 	while (head != NULL) {
 		unsigned int y = head->position.y;
@@ -73,24 +70,38 @@ dijkstra_refresh(struct coordinate origin, struct level *level)
 			if (level->tiles[c.y][c.x].flags & TA_WALL)
 				continue;
 
-			struct _tile_queue *new =
-			    calloc(1, sizeof(struct _tile_queue));
-			if (new == NULL)
-				err("dijkstra_refresh: calloc");
-
-			assert(new != NULL);
-
-			new->next = NULL;
-			new->tile = &level->tiles[c.y][c.x];
-			new->tile->dijkstra = head->tile->dijkstra + 1;
-			new->position = (struct coordinate) { c.y, c.x };
-
-			tail->next = new;
-			tail = new;
+			tail = _enqueue(tail, c, level);
+			tail->tile->dijkstra = head->tile->dijkstra + 1;
 		}
 
-		struct _tile_queue *tmp = head->next;
-		free(head);
-		head = tmp;
+		head = _dequeue(head);
 	}
+}
+
+struct _tile_queue *
+_dequeue(struct _tile_queue *head)
+{
+	struct _tile_queue *tmp = head->next;
+	free(head);
+	return (tmp);
+}
+
+struct _tile_queue *
+_enqueue(
+    struct _tile_queue *tail, struct coordinate position, struct level *level)
+{
+	struct _tile_queue *new = calloc(1, sizeof(struct _tile_queue));
+	if (new == NULL)
+		err("_enqueue: calloc");
+
+	assert(new != NULL);
+
+	new->next = NULL;
+	new->tile = &level->tiles[position.y][position.x];
+	new->position = position;
+
+	if (tail != NULL)
+		tail->next = new;
+
+	return (new);
 }
