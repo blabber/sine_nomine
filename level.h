@@ -23,6 +23,7 @@ typedef enum {
 	TA_VISIBLE = 1U << 2,
 	TA_KNOWN = 1U << 3,
 	TA_TORCH = 1U << 4,
+	TA_VISITED = 1U << 5,
 } TILE_ATTRIBUTE;
 
 struct level_tile {

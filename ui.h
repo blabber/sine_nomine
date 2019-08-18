@@ -25,6 +25,8 @@ typedef enum {
 	UA_DOWN,
 	UA_LEFT,
 	UA_RIGHT,
+	UA_AUTOEXPLORE,
+	UA_TIMEOUT,
 } UI_ACTION;
 
 struct ui_context;
@@ -35,5 +37,7 @@ void ui_destroy(struct ui_context *_context);
 
 void ui_display(
     struct ui_context *_context, struct player player, struct level *_level);
+
+void ui_timeout(struct ui_context *_context, unsigned int _timeout);
 
 UI_ACTION ui_get_action(struct ui_context *_context);

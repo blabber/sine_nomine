@@ -45,11 +45,15 @@ dijkstra_reset(struct level *level)
 }
 
 void
-dijkstra_add_target(struct coordinate origin, struct level *level)
+dijkstra_add_target(
+    struct coordinate origin, struct level *level, unsigned int value)
 {
+	if (level->tiles[origin.y][origin.x].dijkstra <= value)
+		return;
+
 	struct _tile_queue *head, *tail;
 	head = tail = _enqueue(NULL, origin, level);
-	tail->tile->dijkstra = 0;
+	tail->tile->dijkstra = value;
 
 	while (head != NULL) {
 		unsigned int y = head->position.y;

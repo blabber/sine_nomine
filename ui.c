@@ -111,6 +111,12 @@ ui_display(
 	wrefresh(context->window);
 }
 
+void
+ui_timeout(struct ui_context *context, unsigned int timeout)
+{
+	wtimeout(context->window, timeout);
+}
+
 UI_ACTION
 ui_get_action(struct ui_context *context)
 {
@@ -135,8 +141,14 @@ ui_get_action(struct ui_context *context)
 	case 'l':
 		return (UA_RIGHT);
 
+	case 'a':
+		return (UA_AUTOEXPLORE);
+
 	case 'q':
 		return (UA_QUIT);
+
+	case ERR:
+		return (UA_TIMEOUT);
 	}
 
 	return (UA_UNKNOWN);

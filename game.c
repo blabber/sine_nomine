@@ -16,24 +16,30 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include <limits.h>
+
 #include "dijkstra.h"
 #include "fov.h"
 #include "game.h"
 #include "structs.h"
 #include "ui.h"
 
+enum { autoexplore_delay = 100,
+};
+
 struct game {
 	struct level *level;
 	struct player player;
 	struct ui_context *ui;
+	bool autoexplore;
 };
 
 static bool _validate_player_position(
-    struct player candidate, struct level *level);
+    struct coordinate candidate, struct level *level);
 
 static void _apply_effects(struct game *game);
 
-static void _create_dijkstra_map(struct game *_game);
+static UI_ACTION _autoexplore(struct game *game);
 
 struct game *
 game_create(struct game_configuration config)
@@ -49,6 +55,7 @@ game_create(struct game_configuration config)
 
 	g->player = (struct player) { .range = config.range };
 	g->level = level_create(d, config.rooms, min, max);
+	g->autoexplore = false;
 
 	unsigned int torches =
 	    rand() % (config.torches.max - config.torches.min + 1) +
@@ -88,63 +95,74 @@ game_loop(struct game *game)
 {
 	bool running = true;
 	while (running) {
-		_create_dijkstra_map(game);
 		fov_calculate(game->player, game->level);
-
 		ui_display(game->ui, game->player, game->level);
 
-		struct player np = game->player;
+		struct coordinate np = game->player.position;
+
+		UI_ACTION ua;
+		if (game->autoexplore)
+			ua = _autoexplore(game);
+		else
+			ua = ui_get_action(game->ui);
 
 		/* Get user input and act on it. */
-		switch (ui_get_action(game->ui)) {
+		switch (ua) {
 		case UA_UP:
-			np.position.y--;
+			np.y--;
 			break;
 
 		case UA_DOWN:
-			np.position.y++;
+			np.y++;
 			break;
 
 		case UA_LEFT:
-			np.position.x--;
+			np.x--;
 			break;
 
 		case UA_RIGHT:
-			np.position.x++;
+			np.x++;
+			break;
+
+		case UA_AUTOEXPLORE:
+			ui_timeout(game->ui, autoexplore_delay);
+			game->autoexplore = true;
 			break;
 
 		case UA_QUIT:
 			running = false;
 			break;
 
+		case UA_TIMEOUT:
 		case UA_UNKNOWN:
 			break;
 		}
 
-		if (_validate_player_position(np, game->level))
-			game->player = np;
+		if (_validate_player_position(np, game->level)) {
+			game->player.position = np;
+			game->level->tiles[np.y][np.x].flags |= TA_VISITED;
+		}
 
 		_apply_effects(game);
 	}
 }
 
 static bool
-_validate_player_position(struct player candidate, struct level *level)
+_validate_player_position(struct coordinate candidate, struct level *level)
 {
-	if (candidate.position.x < 0)
+	if (candidate.x < 0)
 		return false;
 
-	if (candidate.position.x > level->dimension.width - 1)
+	if (candidate.x > level->dimension.width - 1)
 		return false;
 
-	if (candidate.position.y < 0)
+	if (candidate.y < 0)
 		return false;
 
-	if (candidate.position.y > level->dimension.height - 1)
+	if (candidate.y > level->dimension.height - 1)
 		return false;
 
-	if (level->tiles[candidate.position.y][candidate.position.x].flags &
-	    TA_WALL)
+	if (level->tiles[candidate.y][candidate.x].flags & TA_WALL)
 		return false;
 
 	return true;
@@ -164,9 +182,101 @@ _apply_effects(struct game *game)
 	game->player = player;
 }
 
-static void
-_create_dijkstra_map(struct game *game)
+static UI_ACTION
+_autoexplore(struct game *game)
 {
 	dijkstra_reset(game->level);
-	dijkstra_add_target(game->player.position, game->level);
+
+	/*
+	 * Set all unvisited floor tiles as low priority targets.
+	 */
+	unsigned int targets = 0;
+	for (unsigned int y = 0; y < game->level->dimension.height; y++) {
+		for (unsigned int x = 0; x < game->level->dimension.height; x++) {
+			if (game->level->tiles[y][x].flags & TA_VISITED)
+				continue;
+
+			if (!(game->level->tiles[y][x].flags & TA_FLOOR))
+				continue;
+
+			struct coordinate c = { y, x };
+			dijkstra_add_target(c, game->level, 20);
+			targets++;
+		}
+	}
+
+	/*
+	 * Set known torches as high priority targets.
+	 */
+	for (unsigned int y = 0; y < game->level->dimension.height; y++) {
+		for (unsigned int x = 0; x < game->level->dimension.height; x++) {
+			if (game->level->tiles[y][x].flags & TA_VISITED)
+				continue;
+
+			if (!(game->level->tiles[y][x].flags & TA_FLOOR))
+				continue;
+
+			if (!(game->level->tiles[y][x].flags & TA_KNOWN))
+				continue;
+
+			if (!(game->level->tiles[y][x].flags & TA_TORCH))
+				continue;
+
+			struct coordinate c = { y, x };
+			dijkstra_add_target(c, game->level, 0);
+			targets++;
+		}
+	}
+
+	if (ui_get_action(game->ui) != UA_TIMEOUT) {
+		game->autoexplore = false;
+		ui_timeout(game->ui, 0);
+		return UA_UNKNOWN;
+	}
+
+	if (targets == 0) {
+		game->autoexplore = false;
+		ui_timeout(game->ui, 0);
+		return UA_UNKNOWN;
+	}
+
+	unsigned int min_dijkstra = UINT_MAX;
+	struct offset min_offset = { 0, 0 };
+
+	struct offset off[] = { { -1, 0 }, { 0, 1 }, { 1, 0 }, { 0, -1 } };
+	for (int i = 0; i < 4; i++) {
+		if (game->player.position.y + off[i].y < 0)
+			continue;
+
+		if (game->player.position.x + off[i].x < 0)
+			continue;
+
+		struct coordinate c = { game->player.position.y + off[i].y,
+			game->player.position.x + off[i].x };
+
+		if (c.y > game->level->dimension.height - 1)
+			continue;
+
+		if (c.x > game->level->dimension.width - 1)
+			continue;
+
+		if (game->level->tiles[c.y][c.x].dijkstra < min_dijkstra) {
+			min_dijkstra = game->level->tiles[c.y][c.x].dijkstra;
+			min_offset = off[i];
+		}
+	}
+
+	if (min_offset.y == -1)
+		return UA_UP;
+
+	if (min_offset.y == 1)
+		return UA_DOWN;
+
+	if (min_offset.x == -1)
+		return UA_LEFT;
+
+	if (min_offset.x == 1)
+		return UA_RIGHT;
+
+	return UA_UNKNOWN;
 }

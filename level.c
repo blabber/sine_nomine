@@ -157,6 +157,9 @@ _carve_room(struct level *level, struct coordinate *anchor,
 			level->tiles[oy + y + 1][ox + x + 1].flags = TA_FLOOR;
 	}
 
+	assert(height > 0);
+	assert(width > 0);
+
 	anchor->y = oy + (rand() % height);
 	anchor->x = ox + (rand() % width);
 }
