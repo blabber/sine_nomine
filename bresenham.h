@@ -15,11 +15,9 @@
 
 #pragma once
 
-#include <stdint.h>
-
 struct bresenham_line {
-	uint8_t capacity;
-	uint8_t elements;
+	unsigned int capacity;
+	unsigned int elements;
 	struct coordinate *points;
 };
 

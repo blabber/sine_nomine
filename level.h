@@ -15,8 +15,6 @@
 
 #pragma once
 
-#include <stdint.h>
-
 #include "structs.h"
 
 typedef enum {
@@ -29,13 +27,13 @@ typedef enum {
 
 struct level {
 	struct dimension dimension;
-	uint8_t **tiles;
+	unsigned int **tiles;
 };
 
-struct level *level_create(struct dimension _level, uint8_t rooms,
+struct level *level_create(struct dimension _level, unsigned int rooms,
     struct dimension _room_min, struct dimension _room_max);
 
 void level_destroy(struct level *_level);
 
 void level_modify_random_floor_tiles(
-    struct level *_level, uint8_t _count, uint8_t _mask);
+    struct level *_level, unsigned int _count, unsigned int _mask);

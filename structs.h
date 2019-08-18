@@ -15,29 +15,27 @@
 
 #pragma once
 
-#include <stdint.h>
-
 struct coordinate {
-	uint8_t y;
-	uint8_t x;
+	unsigned int y;
+	unsigned int x;
 };
 
 struct player {
 	struct coordinate position;
-	uint8_t range;
+	unsigned int range;
 };
 
 struct offset {
-	int16_t y;
-	int16_t x;
+	int y;
+	int x;
 };
 
 struct dimension {
-	uint8_t height;
-	uint8_t width;
+	unsigned int height;
+	unsigned int width;
 };
 
 struct range {
-	int16_t min;
-	int16_t max;
+	int min;
+	int max;
 };

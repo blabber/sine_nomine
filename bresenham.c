@@ -14,7 +14,6 @@
  */
 
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdlib.h>
 
 #include <assert.h>
@@ -34,8 +33,8 @@ struct bresenham_line *
 bresenham_create_line(struct coordinate start, struct coordinate stop)
 {
 	/* Setup initial conditions */
-	int16_t dx = stop.x - start.x;
-	int16_t dy = stop.y - start.y;
+	int dx = stop.x - start.x;
+	int dy = stop.y - start.y;
 
 	/* Determine how steep the line is */
 	bool is_steep = abs(dy) > abs(dx);
@@ -66,8 +65,8 @@ bresenham_create_line(struct coordinate start, struct coordinate stop)
 	dy = stop.y - start.y;
 
 	/* Calculate error */
-	int16_t error = dx / 2;
-	int8_t ystep = start.y < stop.y ? 1 : (-1);
+	int error = dx / 2;
+	int ystep = start.y < stop.y ? 1 : (-1);
 
 	/* Provide some storage */
 	struct bresenham_line *line = calloc(1, sizeof(struct bresenham_line));
@@ -84,8 +83,8 @@ bresenham_create_line(struct coordinate start, struct coordinate stop)
 	assert(line->points != NULL);
 
 	/* Iterate over bounding box generating points between start and end */
-	uint8_t y = start.y;
-	for (uint8_t x = start.x; x <= stop.x; x++) {
+	unsigned int y = start.y;
+	for (unsigned int x = start.x; x <= stop.x; x++) {
 		if (++line->elements > line->capacity) {
 			line->capacity *= 2;
 
@@ -123,7 +122,7 @@ bresenham_create_line(struct coordinate start, struct coordinate stop)
 
 		assert(line->points != NULL);
 
-		for (uint8_t i = 0; i < line->elements; i++) {
+		for (unsigned int i = 0; i < line->elements; i++) {
 			line->points[i] = op[line->elements - 1 - i];
 		}
 

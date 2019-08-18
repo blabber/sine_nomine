@@ -74,11 +74,11 @@ ui_display(
 	offset.x = center.x - player.position.x;
 
 	werase(context->window);
-	for (uint8_t y = 0; y < level->dimension.height; y++) {
+	for (unsigned int y = 0; y < level->dimension.height; y++) {
 		if ((y + offset.y) < 0)
 			continue;
 
-		for (uint8_t x = 0; x < level->dimension.width; x++) {
+		for (unsigned int x = 0; x < level->dimension.width; x++) {
 			if ((x + offset.x) < 0)
 				continue;
 

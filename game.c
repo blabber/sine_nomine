@@ -14,7 +14,6 @@
  */
 
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdlib.h>
 
 #include "fov.h"
@@ -48,7 +47,7 @@ game_create(struct game_configuration config)
 	g->player = (struct player) { .range = config.range };
 	g->level = level_create(d, config.rooms, min, max);
 
-	uint8_t torches =
+	unsigned int torches =
 	    rand() % (config.torches.max - config.torches.min + 1) +
 	    config.torches.min;
 	level_modify_random_floor_tiles(g->level, torches, TA_TORCH);
@@ -59,8 +58,8 @@ game_create(struct game_configuration config)
 	 * implemented.
 	 */
 	for (;;) {
-		uint8_t y = rand() % (g->level->dimension.height);
-		uint8_t x = rand() % (g->level->dimension.width);
+		unsigned int y = rand() % (g->level->dimension.height);
+		unsigned int x = rand() % (g->level->dimension.width);
 
 		if (g->level->tiles[y][x] & TA_FLOOR) {
 			g->player.position.y = y;
@@ -148,7 +147,7 @@ _validate_player_position(struct player candidate, struct level *level)
 static void
 _apply_effects(struct game *game)
 {
-	uint8_t **tiles = game->level->tiles;
+	unsigned int **tiles = game->level->tiles;
 	struct player player = game->player;
 
 	if (tiles[player.position.y][player.position.x] & TA_TORCH) {

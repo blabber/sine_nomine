@@ -15,18 +15,16 @@
 
 #pragma once
 
-#include <stdint.h>
-
 #include "level.h"
 #include "structs.h"
 
 struct game;
 
 struct game_configuration {
-	uint8_t height;
-	uint8_t width;
-	uint8_t rooms;
-	uint8_t range;
+	unsigned int height;
+	unsigned int width;
+	unsigned int rooms;
+	unsigned int range;
 	struct range roomsize;
 	struct range torches;
 };
