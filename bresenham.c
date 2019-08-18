@@ -71,14 +71,14 @@ bresenham_create_line(struct coordinate start, struct coordinate stop)
 	/* Provide some storage */
 	struct bresenham_line *line = calloc(1, sizeof(struct bresenham_line));
 	if (line == NULL)
-		err("bresenham_create_line: calloc");
+		err("calloc");
 
 	assert(line != NULL);
 
 	line->capacity = 10;
 	line->points = calloc(line->capacity, sizeof(struct coordinate));
 	if (line->points == NULL)
-		err("bresenham_create_line: calloc");
+		err("calloc");
 
 	assert(line->points != NULL);
 
@@ -91,7 +91,7 @@ bresenham_create_line(struct coordinate start, struct coordinate stop)
 			line->points = realloc(line->points,
 			    line->capacity * sizeof(struct coordinate));
 			if (line->points == NULL)
-				err("bresenham_create_line: realloc");
+				err("realloc");
 
 			assert(line->points != NULL);
 		}
@@ -118,7 +118,7 @@ bresenham_create_line(struct coordinate start, struct coordinate stop)
 		line->points =
 		    calloc(line->elements, sizeof(struct coordinate));
 		if (line->points == NULL)
-			err("bresenham_create_line: calloc");
+			err("calloc");
 
 		assert(line->points != NULL);
 

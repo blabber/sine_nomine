@@ -24,18 +24,19 @@
 #include <string.h>
 
 #include "err.h"
+#include "ui.h"
 
-static void _err(bool _print_errno, const char *_fmt, va_list _ap);
+static void __err(bool _print_errno, const char *_fmt, va_list _ap);
 
 void
-err(const char *fmt, ...)
+_err(const char *fmt, ...)
 {
 	assert(fmt != NULL);
 
 	va_list ap;
 	va_start(ap, fmt);
 
-	_err(true, fmt, ap);
+	__err(true, fmt, ap);
 
 	va_end(ap);
 }
@@ -48,16 +49,15 @@ die(const char *fmt, ...)
 	va_list ap;
 	va_start(ap, fmt);
 
-	_err(false, fmt, ap);
+	ui_emergency_exit();
+	__err(false, fmt, ap);
 
 	va_end(ap);
 }
 
 static void
-_err(bool print_errno, const char *fmt, va_list ap)
+__err(bool print_errno, const char *fmt, va_list ap)
 {
-	endwin();
-
 	vfprintf(stderr, fmt, ap);
 
 	if (print_errno)

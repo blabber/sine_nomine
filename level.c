@@ -87,7 +87,7 @@ _allocate(struct dimension d)
 {
 	struct level *l = calloc(1, sizeof(struct level));
 	if (l == NULL)
-		err("level _allocate: calloc");
+		err("calloc");
 
 	assert(l != NULL);
 
@@ -95,14 +95,14 @@ _allocate(struct dimension d)
 
 	l->tiles = calloc(l->dimension.height, sizeof(*l->tiles));
 	if (l->tiles == NULL)
-		err("level _allocate: calloc");
+		err("calloc");
 
 	assert(l->tiles != NULL);
 
 	for (unsigned int y = 0; y < l->dimension.height; y++) {
 		l->tiles[y] = calloc(l->dimension.width, sizeof(**l->tiles));
 		if (l->tiles[y] == NULL)
-			err("level _allocate: calloc");
+			err("calloc");
 
 		assert(l->tiles[y] != NULL);
 

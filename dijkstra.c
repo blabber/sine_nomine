@@ -102,7 +102,7 @@ _enqueue(
 {
 	struct _tile_queue *new = calloc(1, sizeof(struct _tile_queue));
 	if (new == NULL)
-		err("_enqueue: calloc");
+		err("calloc");
 
 	assert(new != NULL);
 

@@ -41,3 +41,9 @@ void ui_display(
 void ui_timeout(struct ui_context *_context, unsigned int _timeout);
 
 UI_ACTION ui_get_action(struct ui_context *_context);
+
+/*
+ * This is deliberately the only ui_* function that needs no explicit
+ * ui_context. Call this to exit the ui before emitting error messages.
+ */
+void ui_emergency_exit(void);

@@ -15,6 +15,17 @@
 
 #pragma once
 
-void err(const char *_fmt, ...);
+#include <stdio.h>
+
+#include "ui.h"
+
+#define err(...)                                                               \
+	do {                                                                   \
+		ui_emergency_exit();                                           \
+		fprintf(stderr, "%s (%s:%d): ", __func__, __FILE__, __LINE__); \
+		_err(__VA_ARGS__);                                             \
+	} while (0)
+
+void _err(const char *_fmt, ...);
 
 void die(const char *_fmt, ...);

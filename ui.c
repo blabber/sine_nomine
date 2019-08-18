@@ -29,14 +29,23 @@ struct ui_context {
 	WINDOW *window;
 };
 
+/*
+ * The ui_context is expected to be passed in by the caller in most functions.
+ * The only exception is the killing of the context before error messages are
+ * emitted. In these cases the context is usually not available, that's why it
+ * kept redundantly in this variable. ui_emergency_exit() makes use of it.
+ */
+static struct ui_context *_ui_context;
+
 static struct dimension _screen_dimension(struct ui_context *_ui_context);
 
 struct ui_context *
 ui_create(void)
 {
-	struct ui_context *c = calloc(1, sizeof(struct ui_context));
+	struct ui_context *c = _ui_context =
+	    calloc(1, sizeof(struct ui_context));
 	if (c == NULL)
-		err("ui_create: calloc");
+		err("calloc");
 
 	assert(c != NULL);
 
@@ -56,6 +65,7 @@ ui_destroy(struct ui_context *context)
 {
 	assert(context != NULL);
 
+	_ui_context = NULL;
 	endwin();
 }
 
@@ -152,6 +162,12 @@ ui_get_action(struct ui_context *context)
 	}
 
 	return (UA_UNKNOWN);
+}
+
+void
+ui_emergency_exit(void)
+{
+	ui_destroy(_ui_context);
 }
 
 static struct dimension

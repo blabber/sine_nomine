@@ -192,7 +192,8 @@ _autoexplore(struct game *game)
 	 */
 	unsigned int targets = 0;
 	for (unsigned int y = 0; y < game->level->dimension.height; y++) {
-		for (unsigned int x = 0; x < game->level->dimension.height; x++) {
+		for (unsigned int x = 0; x < game->level->dimension.height;
+		     x++) {
 			if (game->level->tiles[y][x].flags & TA_VISITED)
 				continue;
 
@@ -209,7 +210,8 @@ _autoexplore(struct game *game)
 	 * Set known torches as high priority targets.
 	 */
 	for (unsigned int y = 0; y < game->level->dimension.height; y++) {
-		for (unsigned int x = 0; x < game->level->dimension.height; x++) {
+		for (unsigned int x = 0; x < game->level->dimension.height;
+		     x++) {
 			if (game->level->tiles[y][x].flags & TA_VISITED)
 				continue;
 
