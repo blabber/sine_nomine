@@ -230,15 +230,9 @@ _autoexplore(struct game *game)
 		}
 	}
 
-	if (ui_get_action(game->ui) != UA_TIMEOUT) {
+	if (targets == 0 || ui_get_action(game->ui) != UA_TIMEOUT) {
 		game->autoexplore = false;
-		ui_timeout(game->ui, 0);
-		return UA_UNKNOWN;
-	}
-
-	if (targets == 0) {
-		game->autoexplore = false;
-		ui_timeout(game->ui, 0);
+		ui_timeout(game->ui, -1);
 		return UA_UNKNOWN;
 	}
 
