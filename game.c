@@ -140,10 +140,8 @@ game_loop(struct game *game)
 			break;
 		}
 
-		if (_validate_player_position(np, game->level)) {
+		if (_validate_player_position(np, game->level))
 			game->player.position = np;
-			game->level->tiles[np.y][np.x].flags |= TA_VISITED;
-		}
 
 		_apply_effects(game);
 	}
@@ -187,10 +185,7 @@ _autoexplore(struct game *game)
 	for (unsigned int y = 0; y < game->level->dimension.height; y++) {
 		for (unsigned int x = 0; x < game->level->dimension.height;
 		     x++) {
-			if (game->level->tiles[y][x].flags & TA_VISITED)
-				continue;
-
-			if (!(game->level->tiles[y][x].flags & TA_FLOOR))
+			if (game->level->tiles[y][x].flags & TA_KNOWN)
 				continue;
 
 			struct coordinate c = { y, x };
@@ -205,9 +200,6 @@ _autoexplore(struct game *game)
 	for (unsigned int y = 0; y < game->level->dimension.height; y++) {
 		for (unsigned int x = 0; x < game->level->dimension.height;
 		     x++) {
-			if (game->level->tiles[y][x].flags & TA_VISITED)
-				continue;
-
 			if (!(game->level->tiles[y][x].flags & TA_FLOOR))
 				continue;
 
@@ -223,7 +215,10 @@ _autoexplore(struct game *game)
 		}
 	}
 
-	if (targets == 0 || ui_get_action(game->ui) != UA_TIMEOUT) {
+	struct coordinate p = game->player.position;
+
+	if (game->level->tiles[p.y][p.x].dijkstra == UINT_MAX ||
+	    ui_get_action(game->ui) != UA_TIMEOUT) {
 		game->autoexplore = false;
 		ui_timeout(game->ui, -1);
 		return UA_UNKNOWN;
