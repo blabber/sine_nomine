@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include "coordinate.h"
 #include "structs.h"
 
 typedef enum {
@@ -32,12 +33,13 @@ struct level_tile {
 };
 
 struct level {
-	struct dimension dimension;
+	struct coordinate_dimension dimension;
 	struct level_tile **tiles;
 };
 
-struct level *level_create(struct dimension _level, unsigned int rooms,
-    struct dimension _room_min, struct dimension _room_max);
+struct level *level_create(struct coordinate_dimension _level,
+    unsigned int rooms, struct coordinate_dimension _room_min,
+    struct coordinate_dimension _room_max);
 
 void level_destroy(struct level *_level);
 

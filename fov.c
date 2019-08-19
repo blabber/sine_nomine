@@ -33,24 +33,26 @@ fov_calculate(struct player player, struct level *level)
 
 	for (int yoff = -player.range;
 	     yoff < 0 || (unsigned int)yoff <= player.range; yoff++) {
-		int y = player.position.y + yoff;
 
-		if (y < 0 || (unsigned int)y > level->dimension.height - 1)
+		struct coordinate_offset off = { yoff, 0 };
+		if (!coordinate_check_bounds_offset(
+			level->dimension, player.position, off))
 			continue;
 
 		for (int xoff = -player.range;
 		     xoff < 0 || (unsigned int)xoff <= player.range; xoff++) {
-			int x = player.position.x + xoff;
 
-			if (x < 0 ||
-			    (unsigned int)x > level->dimension.width - 1)
+			off.x = xoff;
+			if (!coordinate_check_bounds_offset(
+				level->dimension, player.position, off))
 				continue;
 
 			double len = hypot((double)xoff, (double)yoff);
 			if (round(len) > (double)player.range)
 				continue;
 
-			struct coordinate p = { y, x };
+			struct coordinate p =
+			    coordinate_add_offset(player.position, off);
 			struct bresenham_line *l =
 			    bresenham_create_line(player.position, p);
 

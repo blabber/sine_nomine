@@ -37,7 +37,8 @@ struct ui_context {
  */
 static struct ui_context *_ui_context;
 
-static struct dimension _screen_dimension(struct ui_context *_ui_context);
+static struct coordinate_dimension _screen_dimension(
+    struct ui_context *_ui_context);
 
 struct ui_context *
 ui_create(void)
@@ -76,27 +77,29 @@ ui_display(
 	assert(context != NULL);
 	assert(level != NULL);
 
-	struct dimension screen = _screen_dimension(context);
+	struct coordinate_dimension screen = _screen_dimension(context);
 	struct coordinate center = { screen.height / 2, screen.width / 2 };
 
-	struct offset offset = { 0 };
-	offset.y = center.y - player.position.y;
-	offset.x = center.x - player.position.x;
+	struct coordinate_offset offset =
+	    coordinate_get_offset(center, player.position);
 
 	werase(context->window);
 	for (unsigned int y = 0; y < level->dimension.height; y++) {
-		if ((y + offset.y) < 0)
-			continue;
-
 		for (unsigned int x = 0; x < level->dimension.width; x++) {
-			if ((x + offset.x) < 0)
+			struct coordinate tile = { y, x };
+
+			if (!coordinate_check_bounds_offset(
+				screen, tile, offset))
 				continue;
+
+			struct coordinate screen_coordinate =
+			    coordinate_add_offset(tile, offset);
 
 			if (!(level->tiles[y][x].flags & TA_KNOWN))
 				continue;
 
 			wattrset(context->window, A_NORMAL);
-			if (level->tiles[y][x].flags & TA_VISIBLE) {
+			if (level->tiles[tile.y][tile.x].flags & TA_VISIBLE) {
 				wattron(
 				    context->window, COLOR_PAIR(CP_VISIBLE));
 
@@ -104,13 +107,13 @@ ui_display(
 			}
 
 			char t = '#';
-			if (level->tiles[y][x].flags & TA_FLOOR)
+			if (level->tiles[tile.y][tile.x].flags & TA_FLOOR)
 				t = '.';
-			if (level->tiles[y][x].flags & TA_TORCH)
+			if (level->tiles[tile.y][tile.x].flags & TA_TORCH)
 				t = 'T';
 
-			mvwaddch(
-			    context->window, y + offset.y, x + offset.x, t);
+			mvwaddch(context->window, screen_coordinate.y,
+			    screen_coordinate.x, t);
 		}
 	}
 
@@ -170,13 +173,13 @@ ui_emergency_exit(void)
 	ui_destroy(_ui_context);
 }
 
-static struct dimension
+static struct coordinate_dimension
 _screen_dimension(struct ui_context *context)
 {
 	int height, width;
 	getmaxyx(context->window, height, width);
 
-	struct dimension d = { height, width };
+	struct coordinate_dimension d = { height, width };
 
 	return (d);
 }

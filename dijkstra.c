@@ -56,22 +56,16 @@ dijkstra_add_target(
 	tail->tile->dijkstra = value;
 
 	while (head != NULL) {
-		unsigned int y = head->position.y;
-		unsigned int x = head->position.x;
-
-		struct offset off[4] = { { -1, 0 }, { 0, 1 }, { 1, 0 },
-			{ 0, -1 } };
+		struct coordinate_offset off[4] = { { -1, 0 }, { 0, 1 },
+			{ 1, 0 }, { 0, -1 } };
 
 		for (int i = 0; i < 4; i++) {
-			if (y + off[i].y < 0 ||
-			    y + off[i].y > level->dimension.height - 1)
+			if (!coordinate_check_bounds_offset(
+				level->dimension, head->position, off[i]))
 				continue;
 
-			if (x + off[i].x < 0 ||
-			    x + off[i].x > level->dimension.width - 1)
-				continue;
-
-			struct coordinate c = { y + off[i].y, x + off[i].x };
+			struct coordinate c =
+			    coordinate_add_offset(head->position, off[i]);
 
 			if (level->tiles[c.y][c.x].dijkstra <=
 			    head->tile->dijkstra + 1)

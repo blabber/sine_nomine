@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "coordinate.h"
+
 struct bresenham_line {
 	unsigned int capacity;
 	unsigned int elements;

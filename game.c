@@ -49,9 +49,11 @@ game_create(struct game_configuration config)
 	struct game *g = calloc(1, sizeof(struct game));
 	g->ui = ui_create();
 
-	struct dimension d = { config.height, config.width };
-	struct dimension min = { config.roomsize.min, config.roomsize.min };
-	struct dimension max = { config.roomsize.max, config.roomsize.max };
+	struct coordinate_dimension d = { config.height, config.width };
+	struct coordinate_dimension min = { config.roomsize.min,
+		config.roomsize.min };
+	struct coordinate_dimension max = { config.roomsize.max,
+		config.roomsize.max };
 
 	g->player = (struct player) { .range = config.range };
 	g->level = level_create(d, config.rooms, min, max);
@@ -150,16 +152,7 @@ game_loop(struct game *game)
 static bool
 _validate_player_position(struct coordinate candidate, struct level *level)
 {
-	if (candidate.x < 0)
-		return false;
-
-	if (candidate.x > level->dimension.width - 1)
-		return false;
-
-	if (candidate.y < 0)
-		return false;
-
-	if (candidate.y > level->dimension.height - 1)
+	if (!coordinate_check_bounds(level->dimension, candidate))
 		return false;
 
 	if (level->tiles[candidate.y][candidate.x].flags & TA_WALL)
@@ -237,24 +230,17 @@ _autoexplore(struct game *game)
 	}
 
 	unsigned int min_dijkstra = UINT_MAX;
-	struct offset min_offset = { 0, 0 };
+	struct coordinate_offset min_offset = { 0, 0 };
 
-	struct offset off[] = { { -1, 0 }, { 0, 1 }, { 1, 0 }, { 0, -1 } };
+	struct coordinate_offset off[] = { { -1, 0 }, { 0, 1 }, { 1, 0 },
+		{ 0, -1 } };
 	for (int i = 0; i < 4; i++) {
-		if (game->player.position.y + off[i].y < 0)
+		if (!coordinate_check_bounds_offset(
+			game->level->dimension, game->player.position, off[i]))
 			continue;
 
-		if (game->player.position.x + off[i].x < 0)
-			continue;
-
-		struct coordinate c = { game->player.position.y + off[i].y,
-			game->player.position.x + off[i].x };
-
-		if (c.y > game->level->dimension.height - 1)
-			continue;
-
-		if (c.x > game->level->dimension.width - 1)
-			continue;
+		struct coordinate c =
+		    coordinate_add_offset(game->player.position, off[i]);
 
 		if (game->level->tiles[c.y][c.x].dijkstra < min_dijkstra) {
 			min_dijkstra = game->level->tiles[c.y][c.x].dijkstra;

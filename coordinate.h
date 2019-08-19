@@ -15,10 +15,31 @@
 
 #pragma once
 
-#include "coordinate.h"
-#include "game.h"
+#include <stdbool.h>
 
-void dijkstra_reset(struct level *_level);
+struct coordinate {
+	unsigned int y;
+	unsigned int x;
+};
 
-void dijkstra_add_target(
-    struct coordinate _origin, struct level *_level, unsigned int value);
+struct coordinate_offset {
+	int y;
+	int x;
+};
+
+struct coordinate_dimension {
+	unsigned int height;
+	unsigned int width;
+};
+
+bool coordinate_check_bounds(
+    struct coordinate_dimension _dimension, struct coordinate _coordinate);
+
+bool coordinate_check_bounds_offset(struct coordinate_dimension _dimension,
+    struct coordinate _coordinate, struct coordinate_offset _offset);
+
+struct coordinate coordinate_add_offset(
+    struct coordinate _coordinate, struct coordinate_offset _offset);
+
+struct coordinate_offset coordinate_get_offset(
+    struct coordinate _a, struct coordinate _b);

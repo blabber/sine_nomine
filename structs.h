@@ -15,24 +15,11 @@
 
 #pragma once
 
-struct coordinate {
-	unsigned int y;
-	unsigned int x;
-};
+#include "coordinate.h"
 
 struct player {
 	struct coordinate position;
 	unsigned int range;
-};
-
-struct offset {
-	int y;
-	int x;
-};
-
-struct dimension {
-	unsigned int height;
-	unsigned int width;
 };
 
 struct range {
