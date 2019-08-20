@@ -35,7 +35,7 @@ struct ui_context {
  * emitted. In these cases the context is usually not available, that's why it
  * kept redundantly in this variable. ui_emergency_exit() makes use of it.
  */
-static struct ui_context *_ui_context;
+static struct ui_context *_ui_context = NULL;
 
 static struct coordinate_dimension _screen_dimension(
     struct ui_context *_ui_context);
@@ -170,6 +170,9 @@ ui_get_action(struct ui_context *context)
 void
 ui_emergency_exit(void)
 {
+	if (_ui_context == NULL)
+		return;
+
 	ui_destroy(_ui_context);
 }
 

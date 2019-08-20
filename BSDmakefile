@@ -9,6 +9,9 @@ SRCS=		main.c \
 		level.c \
 		ui.c \
 
+SUBDIR_TARGETS+= test
+SUBDIR=		tests
+
 CSTD?=		c11
 WARNS?=		6
 

@@ -1,4 +1,5 @@
 sn
+main
 *.o
 *.debug
 *.full

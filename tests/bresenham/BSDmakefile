@@ -1,0 +1,15 @@
+PROG=		main
+SRCS=		main.c \
+		../../bresenham.c \
+		../../err.c \
+		../../ui.c \
+		../../coordinate.c \
+
+CSTD?=		c11
+WARNS?=		6
+
+LDADD=		-lncurses
+
+MK_MAN=		no
+
+.include <bsd.prog.mk>

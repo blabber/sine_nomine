@@ -1,0 +1,5 @@
+SUBDIR_TARGETS+= test
+
+SUBDIR=	bresenham 
+
+.include <bsd.subdir.mk>
