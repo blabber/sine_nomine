@@ -14,42 +14,40 @@
  */
 
 #include <stdlib.h>
-#include <stdbool.h>
 
 #include <assert.h>
-#include <string.h>
 
 #include "err.h"
 #include "level.h"
 #include "structs.h"
 
-static struct level *_allocate(struct coordinate_dimension _d);
-
-static void _generate_dungeon(struct level *_l, unsigned int _rooms,
-    struct coordinate_dimension _room_min,
-    struct coordinate_dimension _room_max);
-
-static void _carve_room(struct level *_level, struct coordinate *_anchor,
-    struct coordinate_dimension _room_min,
-    struct coordinate_dimension _room_max);
-
-static void _connect_anchors(
-    struct level *_level, unsigned int _rooms, struct coordinate _anchors[]);
-
 struct level *
-level_create(struct coordinate_dimension d, unsigned int rooms,
-    struct coordinate_dimension room_min, struct coordinate_dimension room_max)
+level_create(struct coordinate_dimension d)
 {
 	assert(d.height > 0);
 	assert(d.width > 0);
-	assert(rooms > 0);
-	assert(room_min.height <= room_max.height);
-	assert(room_min.width <= room_max.width);
-	assert(room_max.width <= d.width - 2 /* borders */);
-	assert(room_max.height <= d.height - 2 /*borders*/);
 
-	struct level *l = _allocate(d);
-	_generate_dungeon(l, rooms, room_min, room_max);
+	struct level *l = calloc(1, sizeof(struct level));
+	if (l == NULL)
+		err("calloc");
+
+	assert(l != NULL);
+
+	l->dimension = d;
+
+	l->tiles = calloc(l->dimension.height, sizeof(*l->tiles));
+	if (l->tiles == NULL)
+		err("calloc");
+
+	assert(l->tiles != NULL);
+
+	for (unsigned int y = 0; y < l->dimension.height; y++) {
+		l->tiles[y] = calloc(l->dimension.width, sizeof(**l->tiles));
+		if (l->tiles[y] == NULL)
+			err("calloc");
+
+		assert(l->tiles[y] != NULL);
+	}
 
 	return (l);
 }
@@ -80,122 +78,6 @@ level_modify_random_floor_tiles(
 				level->tiles[y][x].flags |= mask;
 				break;
 			}
-		}
-	}
-}
-
-static struct level *
-_allocate(struct coordinate_dimension d)
-{
-	struct level *l = calloc(1, sizeof(struct level));
-	if (l == NULL)
-		err("calloc");
-
-	assert(l != NULL);
-
-	l->dimension = d;
-
-	l->tiles = calloc(l->dimension.height, sizeof(*l->tiles));
-	if (l->tiles == NULL)
-		err("calloc");
-
-	assert(l->tiles != NULL);
-
-	for (unsigned int y = 0; y < l->dimension.height; y++) {
-		l->tiles[y] = calloc(l->dimension.width, sizeof(**l->tiles));
-		if (l->tiles[y] == NULL)
-			err("calloc");
-
-		assert(l->tiles[y] != NULL);
-
-		memset(l->tiles[y], TA_WALL,
-		    l->dimension.width * sizeof(**l->tiles));
-	}
-
-	return l;
-}
-
-/*
- * Applies a trivial dungeon generator to the level.
- *
- * 1. Carve out a number of rectangular room (they may overlap)
- * 2. Define a anchor in every room.
- * 3. Iterate the rooms and carve a floor from the anchor of the current room to
- *    the anchor of the next room.
- */
-static void
-_generate_dungeon(struct level *level, unsigned int rooms,
-    struct coordinate_dimension room_min, struct coordinate_dimension room_max)
-{
-	struct coordinate anchors[rooms];
-	for (unsigned int i = 0; i < rooms; i++)
-		_carve_room(level, &anchors[i], room_min, room_max);
-
-	for (unsigned int i = 0; i < rooms - 1; i++)
-		_connect_anchors(level, rooms, anchors);
-}
-
-static void
-_carve_room(struct level *level, struct coordinate *anchor,
-    struct coordinate_dimension room_min, struct coordinate_dimension room_max)
-{
-	unsigned int height =
-	    (rand() % (room_max.height - room_min.height + 1)) +
-	    room_min.height;
-
-	unsigned int width =
-	    (rand() % (room_max.width - room_min.width + 1)) + room_min.width;
-
-	unsigned int oy = rand() %
-	    (level->dimension.height - height + 1 /* full height */ -
-		2 /* borders */);
-
-	unsigned int ox = rand() %
-	    (level->dimension.width - width + 1 /* full width */ -
-		2 /* borders */);
-
-	for (unsigned int y = 0; y < height; y++) {
-		for (unsigned int x = 0; x < width; x++)
-			level->tiles[oy + y + 1][ox + x + 1].flags = TA_FLOOR;
-	}
-
-	assert(height > 0);
-	assert(width > 0);
-
-	anchor->y = oy + (rand() % height);
-	anchor->x = ox + (rand() % width);
-}
-
-static void
-_connect_anchors(
-    struct level *level, unsigned int rooms, struct coordinate anchors[])
-{
-	for (unsigned int i = 0; i < rooms - 1; i++) {
-		struct coordinate start = anchors[i];
-		struct coordinate stop = anchors[i + 1];
-
-		unsigned int ay = start.y;
-		unsigned int by = stop.y;
-
-		if (ay > by) {
-			ay = stop.y;
-			by = start.y;
-		}
-
-		unsigned int ax = start.x;
-		unsigned int bx = stop.x;
-
-		if (ax > bx) {
-			ax = stop.x;
-			bx = start.x;
-		}
-
-		for (unsigned int x = ax; x <= bx; x++) {
-			level->tiles[start.y][x].flags = TA_FLOOR;
-		}
-
-		for (unsigned int y = ay; y <= by; y++) {
-			level->tiles[y][stop.x].flags = TA_FLOOR;
 		}
 	}
 }

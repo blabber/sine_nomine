@@ -19,6 +19,7 @@
 #include <limits.h>
 
 #include "dijkstra.h"
+#include "dungeon.h"
 #include "fov.h"
 #include "game.h"
 #include "structs.h"
@@ -56,7 +57,9 @@ game_create(struct game_configuration config)
 		config.roomsize.max };
 
 	g->player = (struct player) { .range = config.range };
-	g->level = level_create(d, config.rooms, min, max);
+	g->level = level_create(d);
+	dungeon_generate(g->level, config.rooms, min, max);
+
 	g->autoexplore = false;
 
 	unsigned int torches =

@@ -16,29 +16,8 @@
 #pragma once
 
 #include "coordinate.h"
-#include "structs.h"
+#include "level.h"
 
-typedef enum {
-	TA_FLOOR = 1U << 0,
-	TA_WALL = 1U << 1,
-	TA_VISIBLE = 1U << 2,
-	TA_KNOWN = 1U << 3,
-	TA_TORCH = 1U << 4,
-} TILE_ATTRIBUTE;
-
-struct level_tile {
-	unsigned int dijkstra;
-	unsigned int flags;
-};
-
-struct level {
-	struct coordinate_dimension dimension;
-	struct level_tile **tiles;
-};
-
-struct level *level_create(struct coordinate_dimension _level);
-
-void level_destroy(struct level *_level);
-
-void level_modify_random_floor_tiles(
-    struct level *_level, unsigned int _count, unsigned int _mask);
+void dungeon_generate(struct level *_level, unsigned int _rooms,
+    struct coordinate_dimension _room_min,
+    struct coordinate_dimension _room_max);

@@ -3,6 +3,7 @@ SRCS=		main.c \
 		bresenham.c \
 		coordinate.c \
 		dijkstra.c \
+		dungeon.c \
 		err.c \
 		fov.c \
 		game.c \
