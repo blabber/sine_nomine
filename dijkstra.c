@@ -55,7 +55,7 @@ dijkstra_add_target(
 	head = tail = _enqueue(NULL, origin, level);
 	tail->tile->dijkstra = value;
 
-	while (head != NULL) {
+	for (; head != NULL; head = _dequeue(head)) {
 		struct coordinate_offset off[4] = { { -1, 0 }, { 0, 1 },
 			{ 1, 0 }, { 0, -1 } };
 
@@ -77,8 +77,6 @@ dijkstra_add_target(
 			tail = _enqueue(tail, c, level);
 			tail->tile->dijkstra = head->tile->dijkstra + 1;
 		}
-
-		head = _dequeue(head);
 	}
 }
 
