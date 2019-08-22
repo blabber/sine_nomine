@@ -21,4 +21,4 @@
 void dijkstra_reset(struct level *_level);
 
 void dijkstra_add_target(
-    struct coordinate _origin, struct level *_level, unsigned int value);
+    struct coordinate _origin, struct level *_level, unsigned int _value);

@@ -43,7 +43,7 @@ static struct option long_options[] = {
 };
 /* clang-format on */
 
-static void _print_help(char **argv);
+static void _print_help(char **_argv);
 
 int
 main(int argc, char **argv)

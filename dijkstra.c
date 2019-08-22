@@ -29,10 +29,10 @@ struct _tile_queue {
 	struct coordinate position;
 };
 
-struct _tile_queue *_enqueue(struct _tile_queue *_tail,
+static struct _tile_queue *_enqueue(struct _tile_queue *_tail,
     struct coordinate _position, struct level *_level);
 
-struct _tile_queue *_dequeue(struct _tile_queue *_head);
+static struct _tile_queue *_dequeue(struct _tile_queue *_head);
 
 void
 dijkstra_reset(struct level *level)

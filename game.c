@@ -36,11 +36,11 @@ struct game {
 };
 
 static bool _validate_player_position(
-    struct coordinate candidate, struct level *level);
+    struct coordinate _candidate, struct level *_level);
 
-static void _apply_effects(struct game *game);
+static void _apply_effects(struct game *_game);
 
-static UI_ACTION _autoexplore(struct game *game);
+static UI_ACTION _autoexplore(struct game *_game);
 
 struct game *
 game_create(struct game_configuration config)
