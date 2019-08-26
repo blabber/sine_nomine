@@ -1,9 +1,9 @@
 CC ?= clang
 LDFLAGS = -lncurses -lm
-CFLAGS ?= -std=c11 -Wall
+CFLAGS ?= -std=c11 -Wall -I./include
 
 TARGET = sn
-SRC=$(wildcard *.c)
+SRC=$(wildcard src/*.c)
 
 all: $(TARGET)
 
