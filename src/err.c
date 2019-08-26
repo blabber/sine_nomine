@@ -23,8 +23,8 @@
 #include <errno.h>
 #include <string.h>
 
-#include "err.h"
-#include "ui.h"
+#include <sine_nomine/err.h>
+#include <sine_nomine/ui.h>
 
 static void __err(bool _print_errno, const char *_fmt, va_list _ap);
 

@@ -1,6 +1,0 @@
-SUBDIR_TARGETS+= test
-
-SUBDIR=	bresenham \
-	dijkstra \
-
-.include <bsd.subdir.mk>

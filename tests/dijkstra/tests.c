@@ -18,9 +18,9 @@
 #include <assert.h>
 #include <limits.h>
 
-#include "../../coordinate.h"
-#include "../../dijkstra.h"
-#include "../../level.h"
+#include <sine_nomine/coordinate.h>
+#include <sine_nomine/dijkstra.h>
+#include <sine_nomine/level.h>
 
 enum { HEIGHT = 6,
 	WIDTH = 5,

@@ -17,11 +17,11 @@
 
 #include <math.h>
 
-#include "bresenham.h"
-#include "fov.h"
-#include "game.h"
-#include "level.h"
-#include "structs.h"
+#include <sine_nomine/bresenham.h>
+#include <sine_nomine/fov.h>
+#include <sine_nomine/game.h>
+#include <sine_nomine/level.h>
+#include <sine_nomine/structs.h>
 
 void
 fov_calculate(struct player player, struct level *level)

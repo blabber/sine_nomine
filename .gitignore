@@ -1,5 +1,6 @@
 sn
-main
+tests
+!tests/
 *.o
 *.debug
 *.full

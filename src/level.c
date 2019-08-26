@@ -17,9 +17,9 @@
 
 #include <assert.h>
 
-#include "err.h"
-#include "level.h"
-#include "structs.h"
+#include <sine_nomine/err.h>
+#include <sine_nomine/level.h>
+#include <sine_nomine/structs.h>
 
 struct level *
 level_create(struct coordinate_dimension d)

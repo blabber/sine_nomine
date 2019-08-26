@@ -17,8 +17,8 @@
 
 #include <assert.h>
 
-#include "../../bresenham.h"
-#include "../../structs.h"
+#include <sine_nomine/bresenham.h>
+#include <sine_nomine/structs.h>
 
 struct bresenham_test {
 	struct coordinate c1;

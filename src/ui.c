@@ -18,9 +18,9 @@
 #include <assert.h>
 #include <curses.h>
 
-#include "err.h"
-#include "level.h"
-#include "ui.h"
+#include <sine_nomine/err.h>
+#include <sine_nomine/level.h>
+#include <sine_nomine/ui.h>
 
 enum { CP_VISIBLE = 1,
 };

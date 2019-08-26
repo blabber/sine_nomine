@@ -18,12 +18,12 @@
 
 #include <limits.h>
 
-#include "dijkstra.h"
-#include "dungeon.h"
-#include "fov.h"
-#include "game.h"
-#include "structs.h"
-#include "ui.h"
+#include <sine_nomine/dijkstra.h>
+#include <sine_nomine/dungeon.h>
+#include <sine_nomine/fov.h>
+#include <sine_nomine/game.h>
+#include <sine_nomine/structs.h>
+#include <sine_nomine/ui.h>
 
 enum { autoexplore_delay = 100,
 };

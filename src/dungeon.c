@@ -17,9 +17,9 @@
 
 #include <assert.h>
 
-#include "coordinate.h"
-#include "dungeon.h"
-#include "level.h"
+#include <sine_nomine/coordinate.h>
+#include <sine_nomine/dungeon.h>
+#include <sine_nomine/level.h>
 
 static void _carve_room(struct level *_level, struct coordinate *_anchor,
     struct coordinate_dimension _room_min,

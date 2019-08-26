@@ -18,10 +18,10 @@
 #include <assert.h>
 #include <limits.h>
 
-#include "dijkstra.h"
-#include "err.h"
-#include "level.h"
-#include "structs.h"
+#include <sine_nomine/dijkstra.h>
+#include <sine_nomine/err.h>
+#include <sine_nomine/level.h>
+#include <sine_nomine/structs.h>
 
 struct _tile_queue {
 	struct _tile_queue *next;

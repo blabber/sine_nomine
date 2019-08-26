@@ -18,9 +18,9 @@
 
 #include <assert.h>
 
-#include "bresenham.h"
-#include "err.h"
-#include "structs.h"
+#include <sine_nomine/bresenham.h>
+#include <sine_nomine/err.h>
+#include <sine_nomine/structs.h>
 
 /*
  * An implementation of Bresenham's Line Algorithm. Takes two coordinates and

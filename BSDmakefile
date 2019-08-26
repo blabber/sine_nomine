@@ -1,24 +1,59 @@
-PROG=		sn
-SRCS=		main.c \
-		bresenham.c \
-		coordinate.c \
-		dijkstra.c \
-		dungeon.c \
-		err.c \
-		fov.c \
-		game.c \
-		level.c \
-		ui.c \
+PROG=	sn
 
-SUBDIR_TARGETS+= test
-SUBDIR=		tests
+OBJS=	main.o \
+	bresenham.o \
+	coordinate.o \
+	dijkstra.o \
+	dungeon.o \
+	err.o \
+	fov.o \
+	game.o \
+	level.o \
+	ui.o
 
-CSTD?=		c11
-WARNS?=		6
+TESTS=	bresenham \
+	dijkstra
 
-LDADD=		-lncurses \
-		-lm \
+CC ?=	clang
+CFLAGS += -pipe -Wall -I./include -std=c11
+LDFLAGS += -lncurses -lm
 
-MK_MAN=		no
+.if defined(DEBUG) || make(debug)
+CFLAGS += -O0 -g
+.endif
 
-.include <bsd.prog.mk>
+.PHONY:	all clean debug
+.PATH: src
+
+.SUFFIXES: .o
+.c.o:
+	${CC} ${CFLAGS} -o ${.TARGET} -c ${.IMPSRC}
+
+all: ${PROG}
+.for TEST in ${TESTS}
+all: tests/${TEST}/tests
+.endfor
+
+${PROG}: ${OBJS}
+	${CC} ${LDFLAGS} ${CFLAGS} ${OBJS} -o ${.TARGET}
+
+debug: all
+
+clean:
+	rm -f ${OBJS}
+	rm -f ${PROG}
+.for TEST in ${TESTS}
+	rm -f tests/${TEST}/tests.o
+	rm -f tests/${TEST}/tests
+.endfor
+
+.for TEST in ${TESTS}
+test:: tests/${TEST}/tests
+	@echo "==> running tests for '${TEST}'"
+	@tests/${TEST}/tests
+
+# Generate the test binaries. We go the easy way here and depend on all object
+# files (with main.o being the obvious exception).
+tests/${TEST}/tests: tests/${TEST}/tests.o ${OBJS:Nmain.o}
+	${CC} ${LDFLAGS} ${CFLAGS} ${.ALLSRC} -o ${.TARGET}
+.endfor

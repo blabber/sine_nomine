@@ -18,9 +18,9 @@
 
 #include <getopt.h>
 
-#include "err.h"
-#include "game.h"
-#include "structs.h"
+#include <sine_nomine/err.h>
+#include <sine_nomine/game.h>
+#include <sine_nomine/structs.h>
 
 enum { HEIGHT = 100,
 	WIDTH = 100,

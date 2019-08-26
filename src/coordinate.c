@@ -15,7 +15,7 @@
 
 #include <stdbool.h>
 
-#include "coordinate.h"
+#include <sine_nomine/coordinate.h>
 
 bool
 coordinate_check_bounds(
