@@ -12,7 +12,8 @@ OBJS=	main.o \
 	ui.o
 
 TESTS=	bresenham \
-	dijkstra
+	dijkstra \
+	dungeon
 
 CC ?=	clang
 CFLAGS += -pipe -Wall -I./include -std=c11
