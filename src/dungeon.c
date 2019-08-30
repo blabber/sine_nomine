@@ -86,8 +86,10 @@ _carve_room(struct level *level, struct coordinate *anchor,
 	assert(height > 0);
 	assert(width > 0);
 
-	anchor->y = oy + (rand() % height);
-	anchor->x = ox + (rand() % width);
+	anchor->y = oy + (rand() % height) + 1;
+	anchor->x = ox + (rand() % width) + 1;
+
+	assert(level->tiles[anchor->y][anchor->x].flags & TA_FLOOR);
 }
 
 static void
