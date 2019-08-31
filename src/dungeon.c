@@ -70,24 +70,39 @@ _carve_room(struct level *level, struct coordinate *anchor,
 	unsigned int width =
 	    (rand() % (room_max.width - room_min.width + 1)) + room_min.width;
 
-	unsigned int oy = rand() %
-	    (level->dimension.height - height + 1 /* full height */ -
-		2 /* borders */);
+	assert(height >= room_min.height);
+	assert(height <= room_max.height);
+	assert(height <= level->dimension.height - 2 /* borders */);
 
-	unsigned int ox = rand() %
-	    (level->dimension.width - width + 1 /* full width */ -
-		2 /* borders */);
+	assert(width >= room_min.width);
+	assert(width <= room_max.width);
+	assert(width <= level->dimension.width - 2 /* borders */);
+
+	unsigned int oy = (rand() % (level->dimension.height - height - 1)) + 1;
+	unsigned int ox = (rand() % (level->dimension.width - width - 1)) + 1;
+
+	assert(oy > 0);
+	assert(oy < level->dimension.height - 1);
+
+	assert(ox > 0);
+	assert(ox < level->dimension.width - 1);
 
 	for (unsigned int y = 0; y < height; y++) {
-		for (unsigned int x = 0; x < width; x++)
-			level->tiles[oy + y + 1][ox + x + 1].flags = TA_FLOOR;
+		for (unsigned int x = 0; x < width; x++) {
+			struct coordinate c = { oy + y, ox + x };
+
+			level->tiles[c.y][c.x].flags = TA_FLOOR;
+
+			assert(c.x > 0);
+			assert(c.x < level->dimension.width - 1);
+
+			assert(c.y > 0);
+			assert(c.y < level->dimension.height - 1);
+		}
 	}
 
-	assert(height > 0);
-	assert(width > 0);
-
-	anchor->y = oy + (rand() % height) + 1;
-	anchor->x = ox + (rand() % width) + 1;
+	anchor->y = oy + (rand() % height);
+	anchor->x = ox + (rand() % width);
 
 	assert(level->tiles[anchor->y][anchor->x].flags & TA_FLOOR);
 }
@@ -118,10 +133,16 @@ _connect_anchors(
 
 		for (unsigned int x = ax; x <= bx; x++) {
 			level->tiles[start.y][x].flags = TA_FLOOR;
+
+			assert(x > 0);
+			assert(x < level->dimension.width - 1);
 		}
 
 		for (unsigned int y = ay; y <= by; y++) {
 			level->tiles[y][stop.x].flags = TA_FLOOR;
+
+			assert(y > 0);
+			assert(y < level->dimension.height - 1);
 		}
 	}
 }

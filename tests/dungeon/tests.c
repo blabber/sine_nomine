@@ -23,8 +23,8 @@
 #include <sine_nomine/dungeon.h>
 #include <sine_nomine/level.h>
 
-enum { HEIGHT = 1000,
-	WIDTH = 200,
+enum { HEIGHT = 200,
+	WIDTH = 300,
 	ITERATIONS = 100,
 	ROOMS = 10,
 	ROOM_MIN = 10,
@@ -55,7 +55,6 @@ main()
 static void
 _check_connectivity(struct level *level)
 {
-	dijkstra_reset(level);
 	_flood(level);
 
 	for (unsigned int y = 0; y < level->dimension.height; y++) {
@@ -70,6 +69,8 @@ _check_connectivity(struct level *level)
 static void
 _flood(struct level *level)
 {
+	dijkstra_reset(level);
+
 	for (unsigned int y = 0; y < level->dimension.height; y++) {
 		for (unsigned int x = 0; x < level->dimension.width; x++) {
 			if (level->tiles[y][x].flags & TA_FLOOR) {
