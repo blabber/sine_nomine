@@ -23,6 +23,10 @@ LDFLAGS += -lncurses -lm
 CFLAGS += -O0 -g
 .endif
 
+.if defined(SANITIZE)
+CFLAGS += -fsanitize=address,undefined
+.endif
+
 .PHONY:	all clean debug
 .PATH: src
 
