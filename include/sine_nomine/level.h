@@ -27,7 +27,6 @@ typedef enum {
 } TILE_ATTRIBUTE;
 
 struct level_tile {
-	unsigned int dijkstra;
 	unsigned int flags;
 };
 

@@ -179,7 +179,7 @@ _apply_effects(struct game *game)
 static UI_ACTION
 _autoexplore(struct game *game)
 {
-	dijkstra_reset(game->level);
+	struct dijkstra_map *dm = dijkstra_create(game->level);
 
 	/*
 	 * Set all unvisited floor tiles as low priority targets.
@@ -192,7 +192,7 @@ _autoexplore(struct game *game)
 				continue;
 
 			struct coordinate c = { y, x };
-			dijkstra_add_target(c, game->level, 20);
+			dijkstra_add_target(dm, c, 20);
 			targets++;
 		}
 	}
@@ -213,14 +213,14 @@ _autoexplore(struct game *game)
 				continue;
 
 			struct coordinate c = { y, x };
-			dijkstra_add_target(c, game->level, 0);
+			dijkstra_add_target(dm, c, 0);
 			targets++;
 		}
 	}
 
 	struct coordinate p = game->player.position;
 
-	if (game->level->tiles[p.y][p.x].dijkstra == UINT_MAX ||
+	if (dm->values[p.y][p.x] == UINT_MAX ||
 	    ui_get_action(game->ui) != UA_TIMEOUT) {
 		game->autoexplore = false;
 		ui_timeout(game->ui, -1);
@@ -240,11 +240,13 @@ _autoexplore(struct game *game)
 		struct coordinate c =
 		    coordinate_add_offset(game->player.position, off[i]);
 
-		if (game->level->tiles[c.y][c.x].dijkstra < min_dijkstra) {
-			min_dijkstra = game->level->tiles[c.y][c.x].dijkstra;
+		if (dm->values[c.y][c.x] < min_dijkstra) {
+			min_dijkstra = dm->values[c.y][c.x];
 			min_offset = off[i];
 		}
 	}
+
+	dijkstra_destroy(dm);
 
 	if (min_offset.y == -1)
 		return UA_UP;

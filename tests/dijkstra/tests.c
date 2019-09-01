@@ -52,10 +52,10 @@ _test_empty_level_one_target()
 	struct level *l = level_create(d);
 	assert(l != NULL);
 
-	dijkstra_reset(l);
+	struct dijkstra_map *dm = dijkstra_create(l);
 
 	struct coordinate c = { 0, 0 };
-	dijkstra_add_target(c, l, 0);
+	dijkstra_add_target(dm, c, 0);
 
 	/* clang-format off */
 	unsigned int expected[HEIGHT][WIDTH] = {
@@ -70,9 +70,10 @@ _test_empty_level_one_target()
 
 	for (unsigned int y = 0; y < l->dimension.height; y++) {
 		for (unsigned int x = 0; x < l->dimension.width; x++)
-			assert(l->tiles[y][x].dijkstra == expected[y][x]);
+			assert(dm->values[y][x] == expected[y][x]);
 	}
 
+	dijkstra_destroy(dm);
 	level_destroy(l);
 }
 
@@ -83,13 +84,13 @@ _test_empty_level_two_targets()
 	struct level *l = level_create(d);
 	assert(l != NULL);
 
-	dijkstra_reset(l);
+	struct dijkstra_map *dm = dijkstra_create(l);
 
 	struct coordinate c = { 0, 0 };
-	dijkstra_add_target(c, l, 0);
+	dijkstra_add_target(dm, c, 0);
 
 	c = (struct coordinate) { 3, 3 };
-	dijkstra_add_target(c, l, 3);
+	dijkstra_add_target(dm, c, 3);
 
 	/* clang-format off */
 	unsigned int expected[HEIGHT][WIDTH] = {
@@ -104,9 +105,10 @@ _test_empty_level_two_targets()
 
 	for (unsigned int y = 0; y < l->dimension.height; y++) {
 		for (unsigned int x = 0; x < l->dimension.width; x++)
-			assert(l->tiles[y][x].dijkstra == expected[y][x]);
+			assert(dm->values[y][x] == expected[y][x]);
 	}
 
+	dijkstra_destroy(dm);
 	level_destroy(l);
 }
 
@@ -117,13 +119,13 @@ _test_nonempty_level_one_target()
 	struct level *l = level_create(d);
 	assert(l != NULL);
 
-	dijkstra_reset(l);
+	struct dijkstra_map *dm = dijkstra_create(l);
 
 	for (unsigned int y = 0; y < 4; y++)
 		l->tiles[y][2].flags |= TA_WALL;
 
 	struct coordinate c = { 0, 0 };
-	dijkstra_add_target(c, l, 0);
+	dijkstra_add_target(dm, c, 0);
 
 	/* clang-format off */
 	unsigned int expected[HEIGHT][WIDTH] = {
@@ -138,9 +140,10 @@ _test_nonempty_level_one_target()
 
 	for (unsigned int y = 0; y < l->dimension.height; y++) {
 		for (unsigned int x = 0; x < l->dimension.width; x++)
-			assert(l->tiles[y][x].dijkstra == expected[y][x]);
+			assert(dm->values[y][x] == expected[y][x]);
 	}
 
+	dijkstra_destroy(dm);
 	level_destroy(l);
 }
 
@@ -151,16 +154,16 @@ _test_nonempty_level_two_targets()
 	struct level *l = level_create(d);
 	assert(l != NULL);
 
-	dijkstra_reset(l);
+	struct dijkstra_map *dm = dijkstra_create(l);
 
 	for (unsigned int y = 0; y < 4; y++)
 		l->tiles[y][2].flags |= TA_WALL;
 
 	struct coordinate c = { 0, 0 };
-	dijkstra_add_target(c, l, 0);
+	dijkstra_add_target(dm, c, 0);
 
 	c = (struct coordinate) { 3, 3 };
-	dijkstra_add_target(c, l, 3);
+	dijkstra_add_target(dm, c, 3);
 
 	/* clang-format off */
 	unsigned int expected[HEIGHT][WIDTH] = {
@@ -175,8 +178,9 @@ _test_nonempty_level_two_targets()
 
 	for (unsigned int y = 0; y < l->dimension.height; y++) {
 		for (unsigned int x = 0; x < l->dimension.width; x++)
-			assert(l->tiles[y][x].dijkstra == expected[y][x]);
+			assert(dm->values[y][x] == expected[y][x]);
 	}
 
+	dijkstra_destroy(dm);
 	level_destroy(l);
 }

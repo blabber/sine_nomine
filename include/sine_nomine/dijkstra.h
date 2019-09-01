@@ -18,7 +18,16 @@
 #include "coordinate.h"
 #include "game.h"
 
-void dijkstra_reset(struct level *_level);
+// XXX typedef und DIJKSTRA_MAX
+
+struct dijkstra_map {
+	struct level *level;
+	unsigned int **values;
+};
+
+struct dijkstra_map *dijkstra_create(struct level *_level);
+
+void dijkstra_destroy(struct dijkstra_map *_map);
 
 void dijkstra_add_target(
-    struct coordinate _origin, struct level *_level, unsigned int _value);
+    struct dijkstra_map *_map, struct coordinate _position, unsigned int value);
