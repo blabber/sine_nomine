@@ -16,7 +16,6 @@
 #include <stdlib.h>
 
 #include <assert.h>
-#include <limits.h>
 
 #include <sine_nomine/coordinate.h>
 #include <sine_nomine/dijkstra.h>
@@ -58,7 +57,7 @@ _test_empty_level_one_target()
 	dijkstra_add_target(dm, c, 0);
 
 	/* clang-format off */
-	unsigned int expected[HEIGHT][WIDTH] = {
+	dijkstra expected[HEIGHT][WIDTH] = {
 		{ 0, 1, 2, 3, 4 },
 		{ 1, 2, 3, 4, 5 },
 		{ 2, 3, 4, 5, 6 },
@@ -93,7 +92,7 @@ _test_empty_level_two_targets()
 	dijkstra_add_target(dm, c, 3);
 
 	/* clang-format off */
-	unsigned int expected[HEIGHT][WIDTH] = {
+	dijkstra expected[HEIGHT][WIDTH] = {
 		{ 0, 1, 2, 3, 4 },
 		{ 1, 2, 3, 4, 5 },
 		{ 2, 3, 4, 4, 5 },
@@ -128,13 +127,13 @@ _test_nonempty_level_one_target()
 	dijkstra_add_target(dm, c, 0);
 
 	/* clang-format off */
-	unsigned int expected[HEIGHT][WIDTH] = {
-		{ 0, 1, UINT_MAX, 11, 12 },
-		{ 1, 2, UINT_MAX, 10, 11 },
-		{ 2, 3, UINT_MAX,  9, 10 },
-		{ 3, 4, UINT_MAX,  8,  9 },
-		{ 4, 5,        6,  7,  8 },
-		{ 5, 6,        7,  8,  9 },
+	dijkstra expected[HEIGHT][WIDTH] = {
+		{ 0, 1, DIJKSTRA_MAX, 11, 12 },
+		{ 1, 2, DIJKSTRA_MAX, 10, 11 },
+		{ 2, 3, DIJKSTRA_MAX,  9, 10 },
+		{ 3, 4, DIJKSTRA_MAX,  8,  9 },
+		{ 4, 5,            6,  7,  8 },
+		{ 5, 6,            7,  8,  9 },
 	};
 	/* clang-format on */
 
@@ -166,13 +165,13 @@ _test_nonempty_level_two_targets()
 	dijkstra_add_target(dm, c, 3);
 
 	/* clang-format off */
-	unsigned int expected[HEIGHT][WIDTH] = {
-		{ 0, 1, UINT_MAX, 6, 7 },
-		{ 1, 2, UINT_MAX, 5, 6 },
-		{ 2, 3, UINT_MAX, 4, 5 },
-		{ 3, 4, UINT_MAX, 3, 4 },
-		{ 4, 5,        5, 4, 5 },
-		{ 5, 6,        6, 5, 6 },
+	dijkstra expected[HEIGHT][WIDTH] = {
+		{ 0, 1, DIJKSTRA_MAX, 6, 7 },
+		{ 1, 2, DIJKSTRA_MAX, 5, 6 },
+		{ 2, 3, DIJKSTRA_MAX, 4, 5 },
+		{ 3, 4, DIJKSTRA_MAX, 3, 4 },
+		{ 4, 5,            5, 4, 5 },
+		{ 5, 6,            6, 5, 6 },
 	};
 	/* clang-format on */
 

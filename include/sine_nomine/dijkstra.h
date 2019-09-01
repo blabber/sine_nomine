@@ -15,14 +15,19 @@
 
 #pragma once
 
+#include <limits.h>
+
 #include "coordinate.h"
 #include "game.h"
 
-// XXX typedef und DIJKSTRA_MAX
+typedef unsigned int dijkstra;
 
 struct dijkstra_map {
 	struct level *level;
-	unsigned int **values;
+	dijkstra **values;
+};
+
+enum { DIJKSTRA_MAX = USHRT_MAX,
 };
 
 struct dijkstra_map *dijkstra_create(struct level *_level);

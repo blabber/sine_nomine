@@ -16,7 +16,6 @@
 #include <stdlib.h>
 
 #include <assert.h>
-#include <limits.h>
 
 #include <sine_nomine/coordinate.h>
 #include <sine_nomine/dijkstra.h>
@@ -62,7 +61,7 @@ _check_connectivity(struct level *level)
 	for (unsigned int y = 0; y < dm->level->dimension.height; y++) {
 		for (unsigned int x = 0; x < dm->level->dimension.width; x++) {
 			if (dm->level->tiles[y][x].flags & TA_FLOOR) {
-				assert(dm->values[y][x] < UINT_MAX);
+				assert(dm->values[y][x] < DIJKSTRA_MAX);
 			}
 		}
 	}

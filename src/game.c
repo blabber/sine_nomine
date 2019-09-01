@@ -16,8 +16,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include <limits.h>
-
 #include <sine_nomine/dijkstra.h>
 #include <sine_nomine/dungeon.h>
 #include <sine_nomine/fov.h>
@@ -220,14 +218,14 @@ _autoexplore(struct game *game)
 
 	struct coordinate p = game->player.position;
 
-	if (dm->values[p.y][p.x] == UINT_MAX ||
+	if (dm->values[p.y][p.x] == DIJKSTRA_MAX ||
 	    ui_get_action(game->ui) != UA_TIMEOUT) {
 		game->autoexplore = false;
 		ui_timeout(game->ui, -1);
 		return UA_UNKNOWN;
 	}
 
-	unsigned int min_dijkstra = UINT_MAX;
+	dijkstra min_dijkstra = DIJKSTRA_MAX;
 	struct coordinate_offset min_offset = { 0, 0 };
 
 	struct coordinate_offset off[] = { { -1, 0 }, { 0, 1 }, { 1, 0 },

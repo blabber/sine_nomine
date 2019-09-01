@@ -16,7 +16,6 @@
 #include <stdlib.h>
 
 #include <assert.h>
-#include <limits.h>
 
 #include <sine_nomine/dijkstra.h>
 #include <sine_nomine/err.h>
@@ -25,7 +24,7 @@
 
 struct _tile_queue {
 	struct _tile_queue *next;
-	unsigned int *value;
+	dijkstra *value;
 	struct coordinate position;
 };
 
@@ -44,7 +43,7 @@ dijkstra_create(struct level *level)
 
 	for (unsigned int y = 0; y < m->level->dimension.height; y++) {
 		for (unsigned int x = 0; x < m->level->dimension.width; x++) {
-			m->values[y][x] = UINT_MAX;
+			m->values[y][x] = DIJKSTRA_MAX;
 		}
 	}
 
