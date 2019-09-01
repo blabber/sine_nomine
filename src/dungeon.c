@@ -70,10 +70,12 @@ _carve_room(struct level *level, struct coordinate *anchor,
 	unsigned int width =
 	    (rand() % (room_max.width - room_min.width + 1)) + room_min.width;
 
+	assert(height > 0);
 	assert(height >= room_min.height);
 	assert(height <= room_max.height);
 	assert(height <= level->dimension.height - 2 /* borders */);
 
+	assert(width > 0);
 	assert(width >= room_min.width);
 	assert(width <= room_max.width);
 	assert(width <= level->dimension.width - 2 /* borders */);
