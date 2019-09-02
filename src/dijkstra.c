@@ -43,6 +43,8 @@ static struct _tile_queue *_dequeue(struct _tile_queue *_head);
 struct dijkstra_map *
 dijkstra_create(struct level *level)
 {
+	assert(level != NULL);
+
 	struct dijkstra_map *m = _allocate_map(level);
 	m->level = level;
 
@@ -58,6 +60,8 @@ dijkstra_create(struct level *level)
 void
 dijkstra_destroy(struct dijkstra_map *map)
 {
+	assert(map != NULL);
+
 	for (unsigned int y = 0; y < map->level->dimension.height; y++) {
 		free(map->values[y]);
 	}
@@ -70,6 +74,9 @@ void
 dijkstra_add_target(
     struct dijkstra_map *map, struct coordinate position, dijkstra value)
 {
+	assert(map != NULL);
+	assert(coordinate_check_bounds(map->level->dimension, position));
+
 	if (map->values[position.y][position.x] <= value)
 		return;
 
@@ -104,6 +111,9 @@ dijkstra_add_target(
 dijkstra
 dijkstra_get_value(struct dijkstra_map *map, struct coordinate position)
 {
+	assert(map != NULL);
+	assert(coordinate_check_bounds(map->level->dimension, position));
+
 	return (map->values[position.y][position.x]);
 }
 
