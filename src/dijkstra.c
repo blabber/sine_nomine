@@ -63,7 +63,7 @@ dijkstra_destroy(struct dijkstra_map *map)
 
 void
 dijkstra_add_target(
-    struct dijkstra_map *map, struct coordinate position, unsigned int value)
+    struct dijkstra_map *map, struct coordinate position, dijkstra value)
 {
 	if (map->values[position.y][position.x] <= value)
 		return;

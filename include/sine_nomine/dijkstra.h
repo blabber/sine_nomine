@@ -35,4 +35,4 @@ struct dijkstra_map *dijkstra_create(struct level *_level);
 void dijkstra_destroy(struct dijkstra_map *_map);
 
 void dijkstra_add_target(
-    struct dijkstra_map *_map, struct coordinate _position, unsigned int value);
+    struct dijkstra_map *_map, struct coordinate _position, dijkstra value);
