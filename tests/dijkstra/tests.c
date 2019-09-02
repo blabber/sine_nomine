@@ -68,8 +68,10 @@ _test_empty_level_one_target()
 	/* clang-format on */
 
 	for (unsigned int y = 0; y < l->dimension.height; y++) {
-		for (unsigned int x = 0; x < l->dimension.width; x++)
-			assert(dm->values[y][x] == expected[y][x]);
+		for (unsigned int x = 0; x < l->dimension.width; x++) {
+			struct coordinate c = { y, x };
+			assert(dijkstra_get_value(dm, c) == expected[y][x]);
+		}
 	}
 
 	dijkstra_destroy(dm);
@@ -103,8 +105,10 @@ _test_empty_level_two_targets()
 	/* clang-format on */
 
 	for (unsigned int y = 0; y < l->dimension.height; y++) {
-		for (unsigned int x = 0; x < l->dimension.width; x++)
-			assert(dm->values[y][x] == expected[y][x]);
+		for (unsigned int x = 0; x < l->dimension.width; x++) {
+			struct coordinate c = { y, x };
+			assert(dijkstra_get_value(dm, c) == expected[y][x]);
+		}
 	}
 
 	dijkstra_destroy(dm);
@@ -138,8 +142,10 @@ _test_nonempty_level_one_target()
 	/* clang-format on */
 
 	for (unsigned int y = 0; y < l->dimension.height; y++) {
-		for (unsigned int x = 0; x < l->dimension.width; x++)
-			assert(dm->values[y][x] == expected[y][x]);
+		for (unsigned int x = 0; x < l->dimension.width; x++) {
+			struct coordinate c = { y, x };
+			assert(dijkstra_get_value(dm, c) == expected[y][x]);
+		}
 	}
 
 	dijkstra_destroy(dm);
@@ -176,8 +182,10 @@ _test_nonempty_level_two_targets()
 	/* clang-format on */
 
 	for (unsigned int y = 0; y < l->dimension.height; y++) {
-		for (unsigned int x = 0; x < l->dimension.width; x++)
-			assert(dm->values[y][x] == expected[y][x]);
+		for (unsigned int x = 0; x < l->dimension.width; x++) {
+			struct coordinate c = { y, x };
+			assert(dijkstra_get_value(dm, c) == expected[y][x]);
+		}
 	}
 
 	dijkstra_destroy(dm);

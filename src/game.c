@@ -218,7 +218,7 @@ _autoexplore(struct game *game)
 
 	struct coordinate p = game->player.position;
 
-	if (dm->values[p.y][p.x] == DIJKSTRA_MAX ||
+	if (dijkstra_get_value(dm, p) == DIJKSTRA_MAX ||
 	    ui_get_action(game->ui) != UA_TIMEOUT) {
 		game->autoexplore = false;
 		ui_timeout(game->ui, -1);
@@ -238,8 +238,8 @@ _autoexplore(struct game *game)
 		struct coordinate c =
 		    coordinate_add_offset(game->player.position, off[i]);
 
-		if (dm->values[c.y][c.x] < min_dijkstra) {
-			min_dijkstra = dm->values[c.y][c.x];
+		if (dijkstra_get_value(dm, c) < min_dijkstra) {
+			min_dijkstra = dijkstra_get_value(dm, c);
 			min_offset = off[i];
 		}
 	}

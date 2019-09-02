@@ -22,10 +22,7 @@
 
 typedef unsigned int dijkstra;
 
-struct dijkstra_map {
-	struct level *level;
-	dijkstra **values;
-};
+struct dijkstra_map;
 
 enum { DIJKSTRA_MAX = UINT_MAX,
 };
@@ -36,3 +33,6 @@ void dijkstra_destroy(struct dijkstra_map *_map);
 
 void dijkstra_add_target(
     struct dijkstra_map *_map, struct coordinate _position, dijkstra value);
+
+dijkstra dijkstra_get_value(
+    struct dijkstra_map *_map, struct coordinate _position);

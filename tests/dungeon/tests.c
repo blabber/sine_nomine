@@ -32,7 +32,7 @@ enum { HEIGHT = 200,
 
 static void _check_connectivity(struct level *_level);
 
-static void _flood(struct dijkstra_map *_map);
+static struct dijkstra_map *_flood(struct level *_level);
 
 int
 main()
@@ -54,14 +54,14 @@ main()
 static void
 _check_connectivity(struct level *level)
 {
-	struct dijkstra_map *dm = dijkstra_create(level);
+	struct dijkstra_map *dm = _flood(level);
 
-	_flood(dm);
-
-	for (unsigned int y = 0; y < dm->level->dimension.height; y++) {
-		for (unsigned int x = 0; x < dm->level->dimension.width; x++) {
-			if (dm->level->tiles[y][x].flags & TA_FLOOR) {
-				assert(dm->values[y][x] < DIJKSTRA_MAX);
+	for (unsigned int y = 0; y < level->dimension.height; y++) {
+		for (unsigned int x = 0; x < level->dimension.width; x++) {
+			if (level->tiles[y][x].flags & TA_FLOOR) {
+				struct coordinate c = { y, x };
+				assert(
+				    dijkstra_get_value(dm, c) < DIJKSTRA_MAX);
 			}
 		}
 	}
@@ -69,15 +69,21 @@ _check_connectivity(struct level *level)
 	dijkstra_destroy(dm);
 }
 
-void
-_flood(struct dijkstra_map *map)
+struct dijkstra_map *
+_flood(struct level *level)
 {
-	for (unsigned int y = 0; y < map->level->dimension.height; y++) {
-		for (unsigned int x = 0; x < map->level->dimension.width; x++) {
-			if (map->level->tiles[y][x].flags & TA_FLOOR) {
+	struct dijkstra_map *dm = dijkstra_create(level);
+
+	for (unsigned int y = 0; y < level->dimension.height; y++) {
+		for (unsigned int x = 0; x < level->dimension.width; x++) {
+			if (level->tiles[y][x].flags & TA_FLOOR) {
 				struct coordinate c = { y, x };
-				dijkstra_add_target(map, c, 0);
+				dijkstra_add_target(dm, c, 0);
+
+				return (dm);
 			}
 		}
 	}
+
+	return (dm);
 }

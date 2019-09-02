@@ -22,6 +22,11 @@
 #include <sine_nomine/level.h>
 #include <sine_nomine/structs.h>
 
+struct dijkstra_map {
+	struct level *level;
+	dijkstra **values;
+};
+
 struct _tile_queue {
 	struct _tile_queue *next;
 	dijkstra *value;
@@ -94,6 +99,12 @@ dijkstra_add_target(
 			*tail->value = *head->value + 1;
 		}
 	}
+}
+
+dijkstra
+dijkstra_get_value(struct dijkstra_map *map, struct coordinate position)
+{
+	return (map->values[position.y][position.x]);
 }
 
 static struct dijkstra_map *
