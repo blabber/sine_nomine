@@ -27,7 +27,7 @@ struct dijkstra_map {
 	dijkstra **values;
 };
 
-enum { DIJKSTRA_MAX = USHRT_MAX,
+enum { DIJKSTRA_MAX = UINT_MAX,
 };
 
 struct dijkstra_map *dijkstra_create(struct level *_level);
