@@ -66,7 +66,7 @@ _check_connectivity(struct level *level)
 		}
 	}
 
-	//	dijkstra_destroy(dm);
+	dijkstra_destroy(dm);
 }
 
 void
