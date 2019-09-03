@@ -31,7 +31,7 @@ struct dijkstra_map {
 	 * complex. Better to keep this in mind.
 	 */
 	struct level *level;
-	dijkstra **values;
+	dijkstra *values;
 };
 
 struct _tile_queue {
@@ -47,6 +47,8 @@ static struct _tile_queue *_enqueue(struct _tile_queue *_tail,
 
 static struct _tile_queue *_dequeue(struct _tile_queue *_head);
 
+unsigned int _index(struct dijkstra_map *_map, struct coordinate _position);
+
 struct dijkstra_map *
 dijkstra_create(struct level *level)
 {
@@ -57,7 +59,8 @@ dijkstra_create(struct level *level)
 
 	for (unsigned int y = 0; y < m->level->dimension.height; y++) {
 		for (unsigned int x = 0; x < m->level->dimension.width; x++) {
-			m->values[y][x] = DIJKSTRA_MAX;
+			struct coordinate c = { y, x };
+			m->values[_index(m, c)] = DIJKSTRA_MAX;
 		}
 	}
 
@@ -68,10 +71,6 @@ void
 dijkstra_destroy(struct dijkstra_map *map)
 {
 	assert(map != NULL);
-
-	for (unsigned int y = 0; y < map->level->dimension.height; y++) {
-		free(map->values[y]);
-	}
 
 	free(map->values);
 	free(map);
@@ -84,7 +83,7 @@ dijkstra_add_target(
 	assert(map != NULL);
 	assert(coordinate_check_bounds(map->level->dimension, position));
 
-	if (map->values[position.y][position.x] <= value)
+	if (map->values[_index(map, position)] <= value)
 		return;
 
 	struct _tile_queue *head, *tail;
@@ -103,7 +102,7 @@ dijkstra_add_target(
 			struct coordinate c =
 			    coordinate_add_offset(head->position, off[i]);
 
-			if (map->values[c.y][c.x] <= *head->value + 1)
+			if (map->values[_index(map, c)] <= *head->value + 1)
 				continue;
 
 			if (map->level->tiles[c.y][c.x].flags & TA_WALL)
@@ -121,7 +120,7 @@ dijkstra_get_value(struct dijkstra_map *map, struct coordinate position)
 	assert(map != NULL);
 	assert(coordinate_check_bounds(map->level->dimension, position));
 
-	return (map->values[position.y][position.x]);
+	return (map->values[_index(map, position)]);
 }
 
 static struct dijkstra_map *
@@ -133,11 +132,7 @@ _allocate_map(struct level *level)
 
 	assert(m != NULL);
 
-	m->values = calloc(level->dimension.height, sizeof(*m->values));
-	for (unsigned int y = 0; y < level->dimension.height; y++) {
-		m->values[y] =
-		    calloc(level->dimension.width, sizeof(**m->values));
-	}
+	m->values = calloc(level->dimension.height * level->dimension.width, sizeof(*m->values));
 
 	return (m);
 }
@@ -161,11 +156,17 @@ _enqueue(struct _tile_queue *tail, struct coordinate position,
 	assert(new != NULL);
 
 	new->next = NULL;
-	new->value = &map->values[position.y][position.x];
+	new->value = &map->values[_index(map, position)];
 	new->position = position;
 
 	if (tail != NULL)
 		tail->next = new;
 
 	return (new);
+}
+
+unsigned int
+_index(struct dijkstra_map *map, struct coordinate position)
+{
+	return (position.y * map->level->dimension.width + position.x);
 }
