@@ -36,14 +36,13 @@ struct dijkstra_map {
 
 struct _tile_queue {
 	struct _tile_queue *next;
-	dijkstra *value;
 	struct coordinate position;
 };
 
 static struct dijkstra_map *_allocate_map(struct level *_level);
 
-static struct _tile_queue *_enqueue(struct _tile_queue *_tail,
-    struct coordinate _position, struct dijkstra_map *_map);
+static struct _tile_queue *_enqueue(
+    struct _tile_queue *_tail, struct coordinate _position);
 
 static struct _tile_queue *_dequeue(struct _tile_queue *_head);
 
@@ -87,8 +86,8 @@ dijkstra_add_target(
 		return;
 
 	struct _tile_queue *head, *tail;
-	head = tail = _enqueue(NULL, position, map);
-	*tail->value = value;
+	head = tail = _enqueue(NULL, position);
+	map->values[_index(map, position)] = value;
 
 	for (; head != NULL; head = _dequeue(head)) {
 		struct coordinate_offset off[4] = { { -1, 0 }, { 0, 1 },
@@ -102,14 +101,16 @@ dijkstra_add_target(
 			struct coordinate c =
 			    coordinate_add_offset(head->position, off[i]);
 
-			if (map->values[_index(map, c)] <= *head->value + 1)
+			if (map->values[_index(map, c)] <=
+			    map->values[_index(map, head->position)] + 1)
 				continue;
 
 			if (map->level->tiles[c.y][c.x].flags & TA_WALL)
 				continue;
 
-			tail = _enqueue(tail, c, map);
-			*tail->value = *head->value + 1;
+			tail = _enqueue(tail, c);
+			map->values[_index(map, tail->position)] =
+			    map->values[_index(map, head->position)] + 1;
 		}
 	}
 }
@@ -146,8 +147,7 @@ _dequeue(struct _tile_queue *head)
 }
 
 struct _tile_queue *
-_enqueue(struct _tile_queue *tail, struct coordinate position,
-    struct dijkstra_map *map)
+_enqueue(struct _tile_queue *tail, struct coordinate position)
 {
 	struct _tile_queue *new = calloc(1, sizeof(struct _tile_queue));
 	if (new == NULL)
@@ -156,7 +156,6 @@ _enqueue(struct _tile_queue *tail, struct coordinate position,
 	assert(new != NULL);
 
 	new->next = NULL;
-	new->value = &map->values[_index(map, position)];
 	new->position = position;
 
 	if (tail != NULL)
