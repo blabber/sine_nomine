@@ -25,10 +25,10 @@
 struct dijkstra_map {
 	/*
 	 * The dijkstra map holds a pointer to the level. This might be a
-	 * problem, as the dijkstra map is snapshot in time, but the level
-	 * moves on. I am reluctant to create a snapshot of the level for the
-	 * dijkstra map, but it might be necessary once things get more
-	 * complex. Better to keep this in mind.
+	 * problem, as the dijkstra map is a snapshot of a specific point in
+	 * time, but the level moves on. I am reluctant to create a snapshot of
+	 * the level for the dijkstra map, but it might be necessary once
+	 * things get more complex. Better to keep this in mind.
 	 */
 	struct level *level;
 	dijkstra *values;
@@ -133,7 +133,8 @@ _allocate_map(struct level *level)
 
 	assert(m != NULL);
 
-	m->values = calloc(level->dimension.height * level->dimension.width, sizeof(*m->values));
+	m->values = calloc(level->dimension.height * level->dimension.width,
+	    sizeof(*m->values));
 
 	return (m);
 }
