@@ -13,6 +13,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include <assert.h>
@@ -34,17 +35,27 @@ struct dijkstra_map {
 	dijkstra *values;
 };
 
-struct _tile_queue {
-	struct _tile_queue *next;
-	struct coordinate position;
+struct _queue {
+	unsigned int capacity;
+	unsigned int head;
+	unsigned int tail;
+
+	struct coordinate *buffer;
 };
 
 static struct dijkstra_map *_allocate_map(struct level *_level);
 
-static struct _tile_queue *_enqueue(
-    struct _tile_queue *_tail, struct coordinate _position);
+static struct _queue *_queue_create(unsigned int _capacity);
 
-static struct _tile_queue *_dequeue(struct _tile_queue *_head);
+static void _queue_destroy(struct _queue *_queue);
+
+static void _enqueue(struct _queue *_queue, struct coordinate _position);
+
+static struct coordinate _dequeue(struct _queue *_queue);
+
+static bool _queue_empty(struct _queue *_queue);
+
+static unsigned int _queue_increment_tail(struct _queue *_queue);
 
 unsigned int _index(struct dijkstra_map *_map, struct coordinate _position);
 
@@ -85,34 +96,37 @@ dijkstra_add_target(
 	if (map->values[_index(map, position)] <= value)
 		return;
 
-	struct _tile_queue *head, *tail;
-	head = tail = _enqueue(NULL, position);
+	struct _queue *q = _queue_create(10);
+	_enqueue(q, position);
 	map->values[_index(map, position)] = value;
 
-	for (; head != NULL; head = _dequeue(head)) {
+	while (!_queue_empty(q)) {
+		struct coordinate c = _dequeue(q);
+
 		struct coordinate_offset off[4] = { { -1, 0 }, { 0, 1 },
 			{ 1, 0 }, { 0, -1 } };
 
 		for (int i = 0; i < 4; i++) {
 			if (!coordinate_check_bounds_offset(
-				map->level->dimension, head->position, off[i]))
+				map->level->dimension, c, off[i]))
 				continue;
 
-			struct coordinate c =
-			    coordinate_add_offset(head->position, off[i]);
+			struct coordinate ct = coordinate_add_offset(c, off[i]);
 
-			if (map->values[_index(map, c)] <=
-			    map->values[_index(map, head->position)] + 1)
+			if (map->values[_index(map, ct)] <=
+			    map->values[_index(map, c)] + 1)
 				continue;
 
-			if (map->level->tiles[c.y][c.x].flags & TA_WALL)
+			if (map->level->tiles[ct.y][ct.x].flags & TA_WALL)
 				continue;
 
-			tail = _enqueue(tail, c);
-			map->values[_index(map, tail->position)] =
-			    map->values[_index(map, head->position)] + 1;
+			_enqueue(q, ct);
+			map->values[_index(map, ct)] =
+			    map->values[_index(map, c)] + 1;
 		}
 	}
+
+	_queue_destroy(q);
 }
 
 dijkstra
@@ -139,30 +153,93 @@ _allocate_map(struct level *level)
 	return (m);
 }
 
-struct _tile_queue *
-_dequeue(struct _tile_queue *head)
+static struct _queue *
+_queue_create(unsigned int capacity)
 {
-	struct _tile_queue *tmp = head->next;
-	free(head);
-	return (tmp);
-}
+	assert(capacity > 0);
 
-struct _tile_queue *
-_enqueue(struct _tile_queue *tail, struct coordinate position)
-{
-	struct _tile_queue *new = calloc(1, sizeof(struct _tile_queue));
-	if (new == NULL)
+	struct _queue *q = calloc(1, sizeof(struct _queue));
+	if (q == NULL)
 		err("calloc");
 
-	assert(new != NULL);
+	assert(q != NULL);
 
-	new->next = NULL;
-	new->position = position;
+	q->capacity = capacity;
+	q->buffer = calloc(capacity, sizeof(*q->buffer));
+	if (q->buffer == NULL)
+		err("calloc");
 
-	if (tail != NULL)
-		tail->next = new;
+	assert(q->buffer != NULL);
 
-	return (new);
+	return (q);
+}
+
+static void
+_queue_destroy(struct _queue *queue)
+{
+	free(queue->buffer);
+	free(queue);
+}
+
+static bool
+_queue_empty(struct _queue *queue)
+{
+	return (queue->head == queue->tail);
+}
+
+static struct coordinate
+_dequeue(struct _queue *queue)
+{
+	assert(queue != NULL);
+	assert(!_queue_empty(queue));
+
+	unsigned int current_head = queue->head;
+	queue->head = (queue->head + 1) % queue->capacity;
+
+	return queue->buffer[current_head];
+}
+
+static void
+_enqueue(struct _queue *queue, struct coordinate position)
+{
+	assert(queue != NULL);
+
+	/*
+	 * Handle buffer overflow.
+	 */
+	if (_queue_increment_tail(queue) == queue->head) {
+		unsigned int new_capacity = queue->capacity * 2;
+
+		struct coordinate *b =
+		    calloc(new_capacity, sizeof(*queue->buffer));
+		if (b == NULL)
+			err("calloc");
+
+		assert(b != NULL);
+
+		unsigned int i = 0;
+		while (!_queue_empty(queue)) {
+			b[i++] = _dequeue(queue);
+		}
+
+		free(queue->buffer);
+		queue->buffer = b;
+
+		queue->capacity = new_capacity;
+		queue->head = 0;
+		queue->tail = i;
+	}
+
+	queue->buffer[queue->tail] = position;
+	queue->tail = _queue_increment_tail(queue);
+
+	assert(!_queue_empty(queue));
+}
+
+static unsigned int
+_queue_increment_tail(struct _queue *queue)
+{
+	return ((queue->tail + 1) % queue->capacity);
 }
 
 unsigned int
