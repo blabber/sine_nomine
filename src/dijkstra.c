@@ -55,7 +55,7 @@ static struct coordinate _dequeue(struct _queue *_queue);
 
 static bool _queue_empty(struct _queue *_queue);
 
-static unsigned int _queue_increment_tail(struct _queue *_queue);
+static unsigned int _queue_increment(unsigned int _index, struct _queue *_queue);
 
 unsigned int _index(struct dijkstra_map *_map, struct coordinate _position);
 
@@ -194,7 +194,7 @@ _dequeue(struct _queue *queue)
 	assert(!_queue_empty(queue));
 
 	unsigned int current_head = queue->head;
-	queue->head = (queue->head + 1) % queue->capacity;
+	queue->head = _queue_increment(queue->head, queue);
 
 	return queue->buffer[current_head];
 }
@@ -207,7 +207,7 @@ _enqueue(struct _queue *queue, struct coordinate position)
 	/*
 	 * Handle buffer overflow.
 	 */
-	if (_queue_increment_tail(queue) == queue->head) {
+	if (_queue_increment(queue->tail, queue) == queue->head) {
 		unsigned int new_capacity = queue->capacity * 2;
 
 		struct coordinate *b =
@@ -231,15 +231,15 @@ _enqueue(struct _queue *queue, struct coordinate position)
 	}
 
 	queue->buffer[queue->tail] = position;
-	queue->tail = _queue_increment_tail(queue);
+	queue->tail = _queue_increment(queue->tail, queue);
 
 	assert(!_queue_empty(queue));
 }
 
 static unsigned int
-_queue_increment_tail(struct _queue *queue)
+_queue_increment(unsigned int index, struct _queue *queue)
 {
-	return ((queue->tail + 1) % queue->capacity);
+	return ((index + 1) % queue->capacity);
 }
 
 unsigned int
